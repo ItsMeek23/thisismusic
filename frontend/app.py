@@ -641,6 +641,21 @@ class Handler(BaseHTTPRequestHandler):
         parsed = urlparse(self.path)
         path = parsed.path
 
+                # HEALTH CHECK (for NGINX)
+        if path == "/health":
+            msg = b"OK"
+            self.send_response(200)
+            self.send_header("Content-Type", "text/plain; charset=utf-8")
+            self.send_header("Content-Length", str(len(msg)))
+            self.send_header("Connection", "close")
+            self.end_headers()
+
+            if send_body:
+                self.wfile.write(msg)
+
+            self.close_connection = True
+            return True
+
         protected_paths = {
             "/home", "/home.html",
             "/liked", "/liked.html",
