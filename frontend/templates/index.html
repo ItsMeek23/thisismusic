@@ -1,0 +1,1032 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>THIS IS MUSIC</title>
+
+<style>
+:root{
+--ink:#07111f;
+--ink2:#0d1d34;
+--panel:rgba(10,23,42,.74);
+--panelSoft:rgba(255,255,255,.06);
+--line:rgba(188,218,255,.18);
+--glow:rgba(84,170,255,.28);
+--blue:#2d74ff;
+--blueSoft:#7fc1ff;
+--mint:#79f0cf;
+--gold:#ffd588;
+--text:#eef5ff;
+--muted:rgba(238,245,255,.72);
+--shadow:0 24px 80px rgba(0,0,0,.42);
+}
+
+*{box-sizing:border-box;}
+
+html{
+scroll-behavior:smooth;
+}
+
+body{
+margin:0;
+font-family:"Trebuchet MS","Avenir Next",sans-serif;
+color:var(--text);
+background:
+radial-gradient(1000px 620px at 12% 8%, rgba(121,240,207,.13), transparent 58%),
+radial-gradient(1200px 760px at 86% 12%, rgba(127,193,255,.22), transparent 62%),
+linear-gradient(180deg,var(--ink),var(--ink2));
+min-height:100vh;
+}
+
+.page{
+max-width:1180px;
+margin:0 auto;
+padding:24px;
+}
+
+.topbar{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:18px;
+padding:14px 18px;
+border-radius:24px;
+background:rgba(255,255,255,.04);
+border:1px solid var(--line);
+box-shadow:var(--shadow);
+backdrop-filter:blur(18px);
+flex-wrap:wrap;
+}
+
+.brand{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.logo{
+width:40px;
+height:40px;
+border-radius:14px;
+background:
+linear-gradient(145deg,var(--mint),transparent 35%),
+linear-gradient(135deg,var(--blue),var(--blueSoft));
+box-shadow:0 16px 36px rgba(45,116,255,.35);
+}
+
+.brandCopy small{
+display:block;
+margin-top:2px;
+color:var(--muted);
+}
+
+.navSearch{
+flex:1;
+min-width:280px;
+display:flex;
+align-items:center;
+gap:10px;
+padding:10px 12px;
+border-radius:999px;
+background:rgba(0,0,0,.22);
+border:1px solid var(--line);
+}
+
+.navSearch input,
+.searchBar input{
+width:100%;
+background:none;
+border:none;
+color:var(--text);
+outline:none;
+font-size:15px;
+}
+
+.navSearch input::placeholder,
+.searchBar input::placeholder{
+color:rgba(238,245,255,.48);
+}
+
+.actions{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.btn{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+padding:12px 16px;
+border-radius:999px;
+border:1px solid var(--line);
+background:rgba(255,255,255,.06);
+color:var(--text);
+text-decoration:none;
+font-weight:700;
+cursor:pointer;
+transition:transform .2s, background .2s, filter .2s;
+}
+
+.btn:hover{
+transform:translateY(-1px);
+background:rgba(255,255,255,.12);
+}
+
+.btn.primary{
+background:linear-gradient(135deg,var(--blue),var(--blueSoft));
+border:none;
+color:#fff;
+box-shadow:0 18px 30px rgba(45,116,255,.28);
+}
+
+.eyebrow{
+display:inline-flex;
+align-items:center;
+gap:8px;
+padding:8px 12px;
+border-radius:999px;
+background:rgba(255,255,255,.05);
+border:1px solid var(--line);
+font-size:12px;
+letter-spacing:.08em;
+text-transform:uppercase;
+color:var(--muted);
+}
+
+.hero{
+display:grid;
+grid-template-columns:1.12fr .88fr;
+gap:22px;
+margin-top:28px;
+}
+
+.heroPanel,
+.signalPanel,
+.statsStrip,
+.section,
+.roadmapCard{
+border:1px solid var(--line);
+background:var(--panel);
+box-shadow:var(--shadow);
+backdrop-filter:blur(18px);
+}
+
+.heroPanel,
+.signalPanel,
+.section{
+border-radius:30px;
+}
+
+.heroPanel{
+padding:34px;
+position:relative;
+overflow:hidden;
+}
+
+.heroPanel::after{
+content:"";
+position:absolute;
+right:-44px;
+bottom:-64px;
+width:240px;
+height:240px;
+border-radius:999px;
+background:radial-gradient(circle, var(--glow), transparent 70%);
+}
+
+.heroTitle{
+font-family:Georgia,"Times New Roman",serif;
+font-size:68px;
+line-height:.98;
+margin:18px 0 14px;
+max-width:11ch;
+}
+
+.heroTitle span{
+color:var(--blueSoft);
+}
+
+.heroSub{
+max-width:58ch;
+margin:0;
+color:var(--muted);
+line-height:1.8;
+font-size:16px;
+}
+
+.heroActions{
+display:flex;
+gap:12px;
+flex-wrap:wrap;
+margin-top:24px;
+}
+
+.chipRow{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-top:24px;
+}
+
+.chip{
+padding:9px 13px;
+border-radius:999px;
+border:1px solid var(--line);
+background:rgba(255,255,255,.05);
+font-size:13px;
+color:var(--muted);
+}
+
+.signalPanel{
+padding:28px;
+display:grid;
+gap:16px;
+align-content:start;
+}
+
+.signalHero{
+padding:18px;
+border-radius:24px;
+background:linear-gradient(180deg, rgba(127,193,255,.14), rgba(255,255,255,.04));
+border:1px solid var(--line);
+}
+
+.signalHero h3{
+margin:0 0 10px;
+font-size:24px;
+}
+
+.miniPlayer{
+margin-top:14px;
+padding:14px;
+border-radius:18px;
+background:rgba(0,0,0,.22);
+border:1px solid var(--line);
+}
+
+.wave{
+display:grid;
+grid-template-columns:repeat(18,1fr);
+gap:5px;
+height:48px;
+align-items:end;
+}
+
+.wave span{
+display:block;
+background:linear-gradient(180deg,var(--mint),var(--blueSoft));
+border-radius:999px 999px 4px 4px;
+opacity:.92;
+}
+
+.statCard{
+padding:16px 18px;
+border-radius:20px;
+background:rgba(255,255,255,.05);
+border:1px solid var(--line);
+}
+
+.statCard strong{
+display:block;
+font-size:26px;
+margin-bottom:6px;
+}
+
+.statCard span{
+color:var(--muted);
+font-size:14px;
+line-height:1.6;
+}
+
+.statsStrip{
+margin-top:22px;
+padding:18px;
+border-radius:24px;
+display:grid;
+grid-template-columns:repeat(4,minmax(0,1fr));
+gap:14px;
+}
+
+.metric{
+padding:16px;
+border-radius:20px;
+background:rgba(255,255,255,.05);
+border:1px solid var(--line);
+}
+
+.metric strong{
+display:block;
+font-size:28px;
+margin-bottom:4px;
+}
+
+.metric span{
+color:var(--muted);
+font-size:14px;
+line-height:1.5;
+}
+
+.section{
+margin-top:24px;
+padding:28px;
+}
+
+.sectionHeader{
+display:flex;
+justify-content:space-between;
+gap:16px;
+align-items:end;
+flex-wrap:wrap;
+margin-bottom:20px;
+}
+
+.sectionTitle{
+font-family:Georgia,"Times New Roman",serif;
+font-size:40px;
+line-height:1;
+margin:10px 0 0;
+}
+
+.sectionSub{
+margin:0;
+max-width:64ch;
+color:var(--muted);
+line-height:1.7;
+}
+
+.featureGrid{
+display:grid;
+grid-template-columns:repeat(3,minmax(0,1fr));
+gap:14px;
+}
+
+.featureCard{
+padding:20px;
+border-radius:22px;
+background:var(--panelSoft);
+border:1px solid var(--line);
+}
+
+.featureCard strong{
+display:block;
+margin:12px 0 8px;
+font-size:17px;
+}
+
+.featureCard p{
+margin:0;
+color:var(--muted);
+line-height:1.7;
+font-size:14px;
+}
+
+.iconBadge{
+width:44px;
+height:44px;
+border-radius:14px;
+display:grid;
+place-items:center;
+background:rgba(127,193,255,.1);
+border:1px solid rgba(127,193,255,.2);
+color:var(--blueSoft);
+font-weight:800;
+}
+
+.roadmap{
+display:grid;
+grid-template-columns:repeat(4,minmax(0,1fr));
+gap:14px;
+}
+
+.roadmapCard{
+padding:20px;
+border-radius:22px;
+}
+
+.roadmapCard h3{
+margin:12px 0 8px;
+font-size:17px;
+}
+
+.roadmapCard p{
+margin:0;
+color:var(--muted);
+line-height:1.7;
+font-size:14px;
+}
+
+.roadmapTag{
+display:inline-flex;
+padding:7px 10px;
+border-radius:999px;
+background:rgba(255,213,136,.1);
+border:1px solid rgba(255,213,136,.22);
+color:var(--gold);
+font-size:12px;
+letter-spacing:.08em;
+text-transform:uppercase;
+}
+
+.searchBar{
+display:flex;
+gap:12px;
+padding:12px;
+border-radius:22px;
+background:rgba(255,255,255,.04);
+border:1px solid var(--line);
+flex-wrap:wrap;
+}
+
+.searchBar input{
+flex:1;
+min-width:240px;
+padding:10px 8px;
+}
+
+.quickRow{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-top:16px;
+}
+
+.quickChip{
+padding:9px 13px;
+border-radius:999px;
+border:1px solid var(--line);
+background:rgba(255,255,255,.05);
+color:var(--text);
+cursor:pointer;
+font-size:13px;
+}
+
+.quickChip:hover{
+background:rgba(255,255,255,.1);
+}
+
+.status{
+margin-top:16px;
+min-height:20px;
+color:var(--muted);
+font-size:14px;
+}
+
+.resultsBlock{
+margin-top:22px;
+}
+
+.resultsHeading{
+margin:0 0 14px;
+font-size:22px;
+}
+
+.results{
+display:grid;
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:18px;
+}
+
+.songCard,
+.albumCard{
+display:flex;
+gap:16px;
+padding:18px;
+border-radius:22px;
+background:rgba(255,255,255,.05);
+border:1px solid var(--line);
+align-items:flex-start;
+}
+
+.songArt,
+.albumArt{
+width:112px;
+height:112px;
+border-radius:18px;
+object-fit:cover;
+flex-shrink:0;
+background:rgba(255,255,255,.08);
+}
+
+.songInfo,
+.albumInfo{
+flex:1;
+min-width:0;
+}
+
+.songInfo h3,
+.albumInfo h3{
+margin:0 0 8px;
+font-size:20px;
+line-height:1.2;
+}
+
+.meta{
+margin:0 0 6px;
+color:var(--muted);
+font-size:14px;
+line-height:1.6;
+}
+
+.previewPlayer{
+width:100%;
+margin-top:12px;
+border-radius:999px;
+}
+
+.linkRow{
+display:flex;
+gap:10px;
+margin-top:14px;
+flex-wrap:wrap;
+}
+
+.emptyState{
+padding:24px;
+border-radius:20px;
+border:1px dashed var(--line);
+background:rgba(255,255,255,.03);
+color:var(--muted);
+text-align:center;
+line-height:1.7;
+}
+
+footer{
+margin:30px 0 12px;
+text-align:center;
+color:rgba(238,245,255,.54);
+font-size:13px;
+}
+
+@media (max-width: 980px){
+.hero{
+grid-template-columns:1fr;
+}
+
+.statsStrip,
+.featureGrid,
+.roadmap,
+.results{
+grid-template-columns:1fr 1fr;
+}
+
+.heroTitle{
+font-size:54px;
+}
+}
+
+@media (max-width: 700px){
+.page{
+padding:18px;
+}
+
+.statsStrip,
+.featureGrid,
+.roadmap,
+.results{
+grid-template-columns:1fr;
+}
+
+.heroPanel,
+.signalPanel,
+.section{
+padding:22px;
+border-radius:24px;
+}
+
+.heroTitle,
+.sectionTitle{
+font-size:38px;
+}
+
+.songCard,
+.albumCard{
+flex-direction:column;
+}
+
+.songArt,
+.albumArt{
+width:100%;
+height:auto;
+aspect-ratio:1/1;
+}
+}
+</style>
+</head>
+
+<body>
+<div class="page">
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo"></div>
+    <div class="brandCopy">
+      <strong>THIS IS MUSIC</strong>
+      <small>Search tracks, discover albums, and stay in the flow.</small>
+    </div>
+  </div>
+
+  <div class="navSearch">
+    <input type="text" placeholder="Search artists, tracks, albums" id="topSearchInput">
+    <button class="btn primary" id="topSearchButton" type="button">Search</button>
+  </div>
+
+  <div class="actions">
+    <a class="btn" href="/login">Log In</a>
+    <a class="btn primary" href="/register">Create Account</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="heroPanel">
+    <span class="eyebrow">Music Discovery</span>
+    <h1 class="heroTitle">Find your next <span>favorite sound</span>.</h1>
+    <p class="heroSub">
+      Search real music data, preview tracks instantly, and jump straight into albums, artists, and songs that match your mood.
+    </p>
+
+    <div class="heroActions">
+      <a href="#music-search" class="btn primary">Start Searching</a>
+      <a href="#explore" class="btn">Explore Features</a>
+    </div>
+
+    <div class="chipRow">
+      <span class="chip">Search</span>
+      <span class="chip">Preview</span>
+      <span class="chip">Albums</span>
+      <span class="chip">Playlists</span>
+      <span class="chip">Recommendations</span>
+      <span class="chip">Community</span>
+    </div>
+  </div>
+
+  <aside class="signalPanel">
+    <div class="signalHero">
+      <span class="eyebrow">Now Playing</span>
+      <h3>Search, preview, and discover in one place.</h3>
+      <p class="sectionSub">
+        Browse tracks and albums with a clean, fast interface built for curiosity and repeat listens.
+      </p>
+
+      <div class="miniPlayer">
+        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;">
+          <div>
+            <strong>Discovery Mode</strong><br>
+            <span style="color:var(--muted);font-size:14px;">Instant previews and quick jumps to full tracks</span>
+          </div>
+          <span class="roadmapTag">Live</span>
+        </div>
+        <div class="wave" aria-hidden="true">
+          <span style="height:22%;"></span>
+          <span style="height:54%;"></span>
+          <span style="height:38%;"></span>
+          <span style="height:68%;"></span>
+          <span style="height:44%;"></span>
+          <span style="height:88%;"></span>
+          <span style="height:52%;"></span>
+          <span style="height:72%;"></span>
+          <span style="height:36%;"></span>
+          <span style="height:82%;"></span>
+          <span style="height:58%;"></span>
+          <span style="height:30%;"></span>
+          <span style="height:64%;"></span>
+          <span style="height:48%;"></span>
+          <span style="height:90%;"></span>
+          <span style="height:42%;"></span>
+          <span style="height:70%;"></span>
+          <span style="height:28%;"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="statCard">
+      <strong>Instant search</strong>
+      <span>Jump into songs and albums without digging through clutter.</span>
+    </div>
+
+    <div class="statCard">
+      <strong>Built for exploration</strong>
+      <span>Preview audio, browse artwork, and keep moving through new music.</span>
+    </div>
+  </aside>
+</section>
+
+<section class="statsStrip">
+  <div class="metric">
+    <strong>Fast</strong>
+    <span>Search results load quickly so discovery feels smooth.</span>
+  </div>
+  <div class="metric">
+    <strong>Rich</strong>
+    <span>Tracks and albums appear together for a fuller picture.</span>
+  </div>
+  <div class="metric">
+    <strong>Clean</strong>
+    <span>A focused layout keeps the music front and center.</span>
+  </div>
+  <div class="metric">
+    <strong>Open</strong>
+    <span>Jump out to Apple Music whenever you want the full experience.</span>
+  </div>
+</section>
+
+<section id="explore" class="section">
+  <div class="sectionHeader">
+    <div>
+      <span class="eyebrow">Why You’ll Like It</span>
+      <h2 class="sectionTitle">A smoother way to discover music</h2>
+    </div>
+    <p class="sectionSub">
+      Everything here is designed to keep you moving from curiosity to playback without friction.
+    </p>
+  </div>
+
+  <div class="featureGrid">
+    <article class="featureCard">
+      <div class="iconBadge">01</div>
+      <strong>Search-first experience</strong>
+      <p>Look up artists, tracks, and albums right away without getting buried under menus.</p>
+    </article>
+
+    <article class="featureCard">
+      <div class="iconBadge">02</div>
+      <strong>Quick audio previews</strong>
+      <p>Sample tracks instantly so you can decide what deserves a full listen.</p>
+    </article>
+
+    <article class="featureCard">
+      <div class="iconBadge">03</div>
+      <strong>Easy path to more</strong>
+      <p>Jump from results to full albums and songs with clean outbound links and a simple flow.</p>
+    </article>
+  </div>
+</section>
+
+<section class="section">
+  <div class="sectionHeader">
+    <div>
+      <span class="eyebrow">Coming Alive</span>
+      <h2 class="sectionTitle">More ways to make it yours</h2>
+    </div>
+    <p class="sectionSub">
+      THIS IS MUSIC is built around discovery first, with room to grow into deeper listening habits and social energy.
+    </p>
+  </div>
+
+  <div class="roadmap">
+    <article class="roadmapCard">
+      <span class="roadmapTag">Playlists</span>
+      <h3>Save the good stuff</h3>
+      <p>Collect favorite finds into playlists that feel personal instead of disposable.</p>
+    </article>
+
+    <article class="roadmapCard">
+      <span class="roadmapTag">Reactions</span>
+      <h3>Like what you hear</h3>
+      <p>Keep track of songs and albums that hit the right nerve at the right time.</p>
+    </article>
+
+    <article class="roadmapCard">
+      <span class="roadmapTag">Recommendations</span>
+      <h3>Find your lane</h3>
+      <p>Let your listening habits shape smarter suggestions over time.</p>
+    </article>
+
+    <article class="roadmapCard">
+      <span class="roadmapTag">Community</span>
+      <h3>Talk music</h3>
+      <p>Share thoughts, compare favorites, and keep the conversation moving beyond the search bar.</p>
+    </article>
+  </div>
+</section>
+
+<section id="music-search" class="section">
+  <div class="sectionHeader">
+    <div>
+      <span class="eyebrow">Live Search</span>
+      <h2 class="sectionTitle">Search Music</h2>
+    </div>
+    <p class="sectionSub">
+      Search for a track, artist, or album and explore real results powered by the iTunes API.
+    </p>
+  </div>
+
+  <div class="searchBar">
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="Try: The Weeknd, Starboy, Kendrick Lamar..."
+    >
+    <button class="btn primary" id="searchButton" type="button">Search</button>
+  </div>
+
+  <div class="quickRow">
+    <button class="quickChip" type="button" data-query="The Weeknd">The Weeknd</button>
+    <button class="quickChip" type="button" data-query="SZA">SZA</button>
+    <button class="quickChip" type="button" data-query="Kendrick Lamar">Kendrick Lamar</button>
+    <button class="quickChip" type="button" data-query="Frank Ocean">Frank Ocean</button>
+    <button class="quickChip" type="button" data-query="Drake">Drake</button>
+  </div>
+
+  <div class="status" id="searchStatus">Try a search to load songs and albums.</div>
+
+  <div class="resultsBlock">
+    <h3 class="resultsHeading">Songs</h3>
+    <div class="results" id="songResults">
+      <div class="emptyState" style="grid-column:1/-1;">
+        Song results will appear here with artwork, preview audio, and Apple Music links.
+      </div>
+    </div>
+  </div>
+
+  <div class="resultsBlock">
+    <h3 class="resultsHeading">Albums</h3>
+    <div class="results" id="albumResults">
+      <div class="emptyState" style="grid-column:1/-1;">
+        Album results will appear here with artwork, release year, and album links.
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+THIS IS MUSIC • Discover more, play more, keep listening.
+</footer>
+
+</div>
+
+<script>
+const searchInput = document.getElementById("searchInput");
+const topSearchInput = document.getElementById("topSearchInput");
+const searchButton = document.getElementById("searchButton");
+const topSearchButton = document.getElementById("topSearchButton");
+const songResultsContainer = document.getElementById("songResults");
+const albumResultsContainer = document.getElementById("albumResults");
+const statusText = document.getElementById("searchStatus");
+const quickChips = document.querySelectorAll("[data-query]");
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function renderEmpty(container, message) {
+  container.innerHTML = `
+    <div class="emptyState" style="grid-column:1/-1;">
+      ${escapeHtml(message)}
+    </div>
+  `;
+}
+
+function renderSongs(songs) {
+  if (!songs.length) {
+    renderEmpty(songResultsContainer, "No song results found.");
+    return;
+  }
+
+  songResultsContainer.innerHTML = songs.map(song => {
+    const artwork = song.artworkUrl100 || "";
+    const trackName = escapeHtml(song.trackName || "Unknown Track");
+    const artistName = escapeHtml(song.artistName || "Unknown Artist");
+    const collectionName = escapeHtml(song.collectionName || "Unknown Album");
+    const previewUrl = song.previewUrl || "";
+    const trackViewUrl = song.trackViewUrl || "#";
+
+    return `
+      <article class="songCard">
+        <img class="songArt" src="${artwork}" alt="${trackName} album artwork">
+        <div class="songInfo">
+          <h3>${trackName}</h3>
+          <p class="meta"><strong>Artist:</strong> ${artistName}</p>
+          <p class="meta"><strong>Album:</strong> ${collectionName}</p>
+          ${
+            previewUrl
+              ? `<audio class="previewPlayer" controls src="${previewUrl}"></audio>`
+              : `<p class="meta">Preview unavailable for this track.</p>`
+          }
+          <div class="linkRow">
+            <a class="btn primary" href="${trackViewUrl}" target="_blank" rel="noopener noreferrer">
+              Open in Apple Music
+            </a>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join("");
+}
+
+function renderAlbums(albums) {
+  if (!albums.length) {
+    renderEmpty(albumResultsContainer, "No album results found.");
+    return;
+  }
+
+  albumResultsContainer.innerHTML = albums.map(album => {
+    const artwork = album.artworkUrl100 || "";
+    const collectionName = escapeHtml(album.collectionName || "Unknown Album");
+    const artistName = escapeHtml(album.artistName || "Unknown Artist");
+    const releaseDate = album.releaseDate
+      ? new Date(album.releaseDate).getFullYear()
+      : "Unknown Year";
+    const collectionViewUrl = album.collectionViewUrl || "#";
+
+    return `
+      <article class="albumCard">
+        <img class="albumArt" src="${artwork}" alt="${collectionName} album artwork">
+        <div class="albumInfo">
+          <h3>${collectionName}</h3>
+          <p class="meta"><strong>Artist:</strong> ${artistName}</p>
+          <p class="meta"><strong>Year:</strong> ${escapeHtml(releaseDate)}</p>
+          <div class="linkRow">
+            <a class="btn primary" href="${collectionViewUrl}" target="_blank" rel="noopener noreferrer">
+              View Album on Apple Music
+            </a>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join("");
+}
+
+function kickOffSearch(query) {
+  const trimmed = query.trim();
+  if (!trimmed) {
+    return;
+  }
+
+  searchInput.value = trimmed;
+  topSearchInput.value = trimmed;
+  document.getElementById("music-search").scrollIntoView({ behavior: "smooth" });
+  performSearch(trimmed);
+}
+
+async function performSearch(query) {
+  const trimmed = query.trim();
+
+  if (!trimmed) {
+    statusText.textContent = "Please enter a search term.";
+    renderEmpty(songResultsContainer, "Add a search term to load songs.");
+    renderEmpty(albumResultsContainer, "Add a search term to load albums.");
+    return;
+  }
+
+  statusText.textContent = `Searching for "${trimmed}"...`;
+  songResultsContainer.innerHTML = "";
+  albumResultsContainer.innerHTML = "";
+
+  try {
+    const response = await fetch(`/api/search?q=${encodeURIComponent(trimmed)}`);
+    if (!response.ok) {
+      throw new Error("Search request failed");
+    }
+
+    const data = await response.json();
+    const songs = Array.isArray(data.songs) ? data.songs : [];
+    const albums = Array.isArray(data.albums) ? data.albums : [];
+
+    statusText.textContent =
+      `Showing ${songs.length} song result${songs.length === 1 ? "" : "s"} and ` +
+      `${albums.length} album result${albums.length === 1 ? "" : "s"} for "${trimmed}".`;
+
+    renderSongs(songs);
+    renderAlbums(albums);
+  } catch (error) {
+    statusText.textContent = "Search failed. Please try again.";
+    renderEmpty(songResultsContainer, "Something went wrong while fetching song results.");
+    renderEmpty(albumResultsContainer, "Something went wrong while fetching album results.");
+  }
+}
+
+searchButton.addEventListener("click", () => {
+  kickOffSearch(searchInput.value);
+});
+
+topSearchButton.addEventListener("click", () => {
+  kickOffSearch(topSearchInput.value);
+});
+
+searchInput.addEventListener("keydown", event => {
+  if (event.key === "Enter") {
+    kickOffSearch(searchInput.value);
+  }
+});
+
+topSearchInput.addEventListener("keydown", event => {
+  if (event.key === "Enter") {
+    kickOffSearch(topSearchInput.value);
+  }
+});
+
+quickChips.forEach(chip => {
+  chip.addEventListener("click", () => {
+    kickOffSearch(chip.dataset.query || "");
+  });
+});
+</script>
+</body>
+</html>

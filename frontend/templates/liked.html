@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Liked Songs | THIS IS MUSIC</title>
+
+<style>
+:root{
+--ink:#07111f;
+--ink2:#0d1d34;
+--panel:rgba(10,23,42,.74);
+--line:rgba(188,218,255,.18);
+--blue:#2d74ff;
+--blueSoft:#7fc1ff;
+--mint:#79f0cf;
+--text:#eef5ff;
+--muted:rgba(238,245,255,.72);
+--danger:#ff8ca8;
+--shadow:0 24px 80px rgba(0,0,0,.42);
+}
+
+body{
+margin:0;
+font-family:"Trebuchet MS",sans-serif;
+color:var(--text);
+background:linear-gradient(180deg,var(--ink),var(--ink2));
+padding:28px;
+}
+
+.page{
+max-width:1100px;
+margin:auto;
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+flex-wrap:wrap;
+gap:10px;
+}
+
+.navActions{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.btn{
+padding:10px 14px;
+border-radius:999px;
+border:1px solid var(--line);
+background:rgba(255,255,255,.06);
+color:var(--text);
+text-decoration:none;
+font-weight:600;
+cursor:pointer;
+}
+
+.btn.primary{
+background:linear-gradient(135deg,var(--blue),var(--blueSoft));
+border:none;
+}
+
+.btn.danger{
+background:rgba(255,140,168,.1);
+border:1px solid rgba(255,140,168,.3);
+color:var(--danger);
+}
+
+.section{
+background:var(--panel);
+padding:20px;
+border-radius:20px;
+border:1px solid var(--line);
+box-shadow:var(--shadow);
+}
+
+.songCard{
+display:flex;
+gap:16px;
+padding:16px;
+border-bottom:1px solid var(--line);
+}
+
+.songArt{
+width:90px;
+height:90px;
+border-radius:12px;
+object-fit:cover;
+}
+
+.songInfo h3{
+margin:0;
+}
+
+.meta{
+margin:4px 0;
+color:var(--muted);
+font-size:14px;
+}
+
+.linkRow{
+margin-top:10px;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.empty{
+text-align:center;
+padding:30px;
+color:var(--muted);
+}
+</style>
+</head>
+
+<body>
+<div class="page">
+
+<header class="topbar">
+  <h2>Liked Songs</h2>
+
+  <div class="navActions">
+    <a class="btn" id="homeLink" href="/home">Home</a>
+    <a class="btn primary" id="likedLink" href="/liked">Liked</a>
+    <a class="btn" id="historyLink" href="/history">History</a>
+    <a class="btn" id="trendingLink" href="/trending">Trending</a>
+    <a class="btn" id="playlistLink" href="/playlists">Playlists</a>
+    <a class="btn" id="profileLink" href="/profile">Profile</a>
+  </div>
+</header>
+
+<section class="section">
+  <div id="songsContainer"></div>
+</section>
+
+</div>
+
+<script>
+const songsContainer = document.getElementById("songsContainer");
+
+const homeLink = document.getElementById("homeLink");
+const likedLink = document.getElementById("likedLink");
+const historyLink = document.getElementById("historyLink");
+const trendingLink = document.getElementById("trendingLink");
+const playlistLink = document.getElementById("playlistLink");
+const profileLink = document.getElementById("profileLink");
+
+function getCookie(name){
+  const cookies = document.cookie.split(";");
+  for(const c of cookies){
+    const trimmed = c.trim();
+    if(trimmed.startsWith(name + "=")){
+      return decodeURIComponent(trimmed.substring(name.length+1));
+    }
+  }
+  return "";
+}
+
+const username = getCookie("username");
+
+if(username){
+  homeLink.href = `/home?username=${username}`;
+  likedLink.href = `/liked?username=${username}`;
+  historyLink.href = `/history?username=${username}`;
+  trendingLink.href = `/trending?username=${username}`;
+  playlistLink.href = `/playlists?username=${username}`;
+  profileLink.href = `/profile?username=${username}`;
+}
+
+function escapeHtml(str){
+  return String(str || "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;");
+}
+
+async function fetchLikedSongs(){
+  const res = await fetch("/api/liked-songs");
+  const data = await res.json();
+  return data.songs || [];
+}
+
+async function unlikeSong(song_id){
+  await fetch("/api/unlike-song",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({song_id, username})
+  });
+  loadSongs();
+}
+
+function renderSongs(songs){
+  if(!songs.length){
+    songsContainer.innerHTML = `<div class="empty">No liked songs yet.</div>`;
+    return;
+  }
+
+  songsContainer.innerHTML = songs.map(song=>`
+    <div class="songCard">
+      <img class="songArt" src="${song.artwork_url}">
+      <div class="songInfo">
+        <h3>${escapeHtml(song.track_name)}</h3>
+        <p class="meta">${escapeHtml(song.artist_name)}</p>
+        <p class="meta">${escapeHtml(song.album_name)}</p>
+
+        ${song.preview_url ? `
+          <audio controls src="${song.preview_url}"></audio>
+        ` : ""}
+
+        <div class="linkRow">
+          ${song.track_view_url ? `
+            <a class="btn primary" href="${song.track_view_url}" target="_blank">Open</a>
+          ` : ""}
+
+          <button class="btn danger" onclick="unlikeSong('${song.song_id}')">
+            Remove
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join("");
+}
+
+async function loadSongs(){
+  const songs = await fetchLikedSongs();
+  renderSongs(songs);
+}
+
+loadSongs();
+</script>
+
+</body>
+</html>

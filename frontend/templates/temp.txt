@@ -1,0 +1,1008 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Home | THIS IS MUSIC</title>
+
+<style>
+:root{
+--ink:#07111f;
+--ink2:#0d1d34;
+--panel:rgba(10,23,42,.74);
+--panelSoft:rgba(255,255,255,.06);
+--line:rgba(188,218,255,.18);
+--blue:#2d74ff;
+--blueSoft:#7fc1ff;
+--mint:#79f0cf;
+--text:#eef5ff;
+--muted:rgba(238,245,255,.72);
+--shadow:0 24px 80px rgba(0,0,0,.42);
+--success:#79f0cf;
+--danger:#ff8ca8;
+}
+
+*{box-sizing:border-box;}
+
+body{
+margin:0;
+font-family:"Trebuchet MS","Avenir Next",sans-serif;
+color:var(--text);
+background:
+radial-gradient(900px 520px at 12% 12%, rgba(127,193,255,.18), transparent 58%),
+radial-gradient(900px 520px at 88% 20%, rgba(121,240,207,.12), transparent 60%),
+linear-gradient(180deg,var(--ink),var(--ink2));
+min-height:100vh;
+padding:28px;
+}
+
+.page{
+max-width:1180px;
+margin:auto;
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:14px 18px;
+border-radius:22px;
+background:rgba(255,255,255,.04);
+border:1px solid var(--line);
+box-shadow:var(--shadow);
+margin-bottom:24px;
+gap:16px;
+flex-wrap:wrap;
+}
+
+.brand{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.logo{
+width:42px;
+height:42px;
+border-radius:14px;
+background:
+linear-gradient(145deg,var(--mint),transparent 35%),
+linear-gradient(135deg,var(--blue),var(--blueSoft));
+}
+
+.navActions{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.btn{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+padding:10px 16px;
+border-radius:999px;
+border:1px solid var(--line);
+background:rgba(255,255,255,.06);
+color:var(--text);
+text-decoration:none;
+font-weight:700;
+cursor:pointer;
+transition:transform .2s, background .2s;
+}
+
+.btn:hover{
+transform:translateY(-1px);
+background:rgba(255,255,255,.12);
+}
+
+.btn.primary{
+background:linear-gradient(135deg,var(--blue),var(--blueSoft));
+border:none;
+}
+
+.btn.secondary{
+background:rgba(255,255,255,.06);
+border:1px solid var(--line);
+}
+
+.btn.danger{
+background:rgba(255,140,168,.08);
+border:1px solid rgba(255,140,168,.24);
+color:var(--danger);
+}
+
+.hero{
+border-radius:30px;
+border:1px solid var(--line);
+background:var(--panel);
+padding:32px;
+box-shadow:var(--shadow);
+margin-bottom:24px;
+}
+
+.hero h1{
+font-family:Georgia,"Times New Roman",serif;
+font-size:46px;
+margin:0 0 10px;
+line-height:1;
+}
+
+.hero p{
+color:var(--muted);
+margin:0;
+line-height:1.7;
+}
+
+.userBadge{
+display:inline-flex;
+align-items:center;
+gap:8px;
+padding:8px 12px;
+border-radius:999px;
+background:rgba(255,255,255,.05);
+border:1px solid var(--line);
+font-size:12px;
+letter-spacing:.08em;
+text-transform:uppercase;
+color:var(--muted);
+margin-bottom:14px;
+}
+
+.searchBox{
+margin-top:24px;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.searchBox input{
+flex:1;
+min-width:240px;
+padding:14px 16px;
+border-radius:16px;
+border:1px solid var(--line);
+background:rgba(0,0,0,.25);
+color:var(--text);
+font-size:15px;
+outline:none;
+}
+
+.searchBox input::placeholder{
+color:rgba(238,245,255,.44);
+}
+
+.quickRow{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-top:16px;
+}
+
+.quickChip{
+padding:9px 13px;
+border-radius:999px;
+border:1px solid var(--line);
+background:rgba(255,255,255,.05);
+color:var(--text);
+cursor:pointer;
+font-size:13px;
+}
+
+.quickChip:hover{
+background:rgba(255,255,255,.1);
+}
+
+.status{
+margin-top:16px;
+min-height:20px;
+color:var(--muted);
+font-size:14px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:16px;
+margin-top:24px;
+}
+
+.card{
+padding:20px;
+border-radius:22px;
+background:var(--panelSoft);
+border:1px solid var(--line);
+}
+
+.card strong{
+display:block;
+margin-bottom:8px;
+font-size:16px;
+}
+
+.card p{
+margin:0;
+color:var(--muted);
+font-size:14px;
+line-height:1.6;
+}
+
+.metaNumber{
+font-size:28px;
+font-weight:800;
+display:block;
+margin-bottom:8px;
+}
+
+.section{
+border-radius:30px;
+border:1px solid var(--line);
+background:var(--panel);
+padding:24px;
+box-shadow:var(--shadow);
+margin-bottom:24px;
+}
+
+.sectionHeader{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:12px;
+flex-wrap:wrap;
+margin-bottom:14px;
+}
+
+.sectionHeader h2{
+margin:0;
+font-size:24px;
+}
+
+.muted{
+color:var(--muted);
+font-size:14px;
+}
+
+.resultsBlock{
+margin-top:24px;
+}
+
+.resultsHeading{
+margin:0 0 14px;
+font-size:22px;
+}
+
+.results{
+display:grid;
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:18px;
+}
+
+.songCard,
+.albumCard{
+display:flex;
+gap:16px;
+padding:18px;
+border-radius:22px;
+background:rgba(255,255,255,.05);
+border:1px solid var(--line);
+align-items:flex-start;
+}
+
+.songArt,
+.albumArt{
+width:112px;
+height:112px;
+border-radius:18px;
+object-fit:cover;
+flex-shrink:0;
+background:rgba(255,255,255,.08);
+}
+
+.songInfo,
+.albumInfo{
+flex:1;
+min-width:0;
+}
+
+.songInfo h3,
+.albumInfo h3{
+margin:0 0 8px;
+font-size:20px;
+line-height:1.2;
+}
+
+.meta{
+margin:0 0 6px;
+color:var(--muted);
+font-size:14px;
+line-height:1.6;
+}
+
+.previewPlayer{
+width:100%;
+margin-top:12px;
+border-radius:999px;
+}
+
+.linkRow{
+display:flex;
+gap:10px;
+margin-top:14px;
+flex-wrap:wrap;
+}
+
+.emptyState{
+padding:24px;
+border-radius:20px;
+border:1px dashed var(--line);
+background:rgba(255,255,255,.03);
+color:var(--muted);
+text-align:center;
+line-height:1.7;
+}
+
+.feedback{
+margin-top:18px;
+padding:14px 16px;
+border-radius:18px;
+border:1px solid var(--line);
+background:rgba(255,255,255,.04);
+display:none;
+font-size:14px;
+}
+
+.feedback.success{
+display:block;
+border-color:rgba(121,240,207,.28);
+background:rgba(121,240,207,.08);
+color:var(--success);
+}
+
+.feedback.error{
+display:block;
+border-color:rgba(255,140,168,.28);
+background:rgba(255,140,168,.08);
+color:var(--danger);
+}
+
+.toastWrap{
+position:fixed;
+right:22px;
+bottom:22px;
+display:flex;
+flex-direction:column;
+gap:10px;
+z-index:999;
+}
+
+.toast{
+min-width:240px;
+max-width:320px;
+padding:14px 16px;
+border-radius:16px;
+background:rgba(10,23,42,.94);
+border:1px solid var(--line);
+box-shadow:var(--shadow);
+font-size:14px;
+animation:slideIn .18s ease;
+}
+
+.toast.success{
+border-color:rgba(121,240,207,.28);
+color:var(--success);
+}
+
+.toast.error{
+border-color:rgba(255,140,168,.28);
+color:var(--danger);
+}
+
+@keyframes slideIn{
+from{opacity:0; transform:translateY(10px);}
+to{opacity:1; transform:translateY(0);}
+}
+
+@media(max-width:1000px){
+.grid{
+grid-template-columns:repeat(2,1fr);
+}
+}
+
+@media(max-width:900px){
+.results{
+grid-template-columns:1fr;
+}
+
+.hero h1{
+font-size:36px;
+}
+}
+
+@media(max-width:700px){
+.grid{
+grid-template-columns:1fr;
+}
+
+.songCard,
+.albumCard{
+flex-direction:column;
+}
+
+.songArt,
+.albumArt{
+width:100%;
+height:auto;
+aspect-ratio:1/1;
+}
+}
+</style>
+</head>
+
+<body>
+<div class="page">
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo"></div>
+    <div>
+      <strong>THIS IS MUSIC</strong><br>
+      <span style="font-size:12px;color:var(--muted)">Your music dashboard</span>
+    </div>
+  </div>
+
+  <div class="navActions">
+    <a class="btn" href="/">Landing</a>
+    <a class="btn secondary" id="likedNavLink" href="/liked">Liked Songs</a>
+    <a class="btn secondary" id="playlistsNavLink" href="/playlists">Playlists</a>
+    <a class="btn primary" href="/logout">Log Out</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="userBadge" id="userBadge">Logged In</div>
+
+  <h1 id="welcomeTitle">Welcome back.</h1>
+
+  <p id="welcomeSub">
+    Search for artists, albums, and tracks to continue discovering music.
+  </p>
+
+  <div class="searchBox">
+    <input
+      type="text"
+      placeholder="Search songs, artists, albums..."
+      id="searchInput"
+    >
+    <button class="btn primary" id="searchButton" type="button">
+      Search
+    </button>
+  </div>
+
+  <div class="quickRow">
+    <button class="quickChip" type="button" data-query="The Weeknd">The Weeknd</button>
+    <button class="quickChip" type="button" data-query="SZA">SZA</button>
+    <button class="quickChip" type="button" data-query="Kendrick Lamar">Kendrick Lamar</button>
+    <button class="quickChip" type="button" data-query="Frank Ocean">Frank Ocean</button>
+    <button class="quickChip" type="button" data-query="Drake">Drake</button>
+  </div>
+
+  <div class="status" id="searchStatus">Try a search to load songs and albums.</div>
+  <div class="feedback" id="actionFeedback"></div>
+</section>
+
+<section class="grid" id="statsGrid">
+  <div class="card">
+    <span class="metaNumber" id="likedCount">0</span>
+    <strong>Liked Songs</strong>
+    <p>Tracks you’ve saved while exploring.</p>
+  </div>
+
+  <div class="card">
+    <span class="metaNumber" id="playlistCount">0</span>
+    <strong>Playlists</strong>
+    <p>Your personal collections.</p>
+  </div>
+
+  <div class="card">
+    <span class="metaNumber" id="recentCount">0</span>
+    <strong>Recent Searches</strong>
+    <p>Searches remembered for quick access.</p>
+  </div>
+
+  <div class="card">
+    <span class="metaNumber" id="playedCount">0</span>
+    <strong>Recently Played</strong>
+    <p>Tracks you’ve previewed lately.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="sectionHeader">
+    <h2>Recent Searches</h2>
+    <button class="btn danger" type="button" id="clearRecentButton">Clear</button>
+  </div>
+  <div class="quickRow" id="recentSearchesRow"></div>
+  <div class="muted" id="recentSearchesEmpty">No recent searches yet.</div>
+</section>
+
+<section class="section">
+  <div class="sectionHeader">
+    <h2>Recently Played</h2>
+    <span class="muted">Tracks you previewed most recently</span>
+  </div>
+  <div class="results" id="recentPlayedResults"></div>
+  <div class="emptyState" id="recentPlayedEmpty">No recent plays yet. Preview a song to see it here.</div>
+</section>
+
+<section class="resultsBlock">
+  <h3 class="resultsHeading">Songs</h3>
+  <div class="results" id="songResults">
+    <div class="emptyState" style="grid-column:1/-1;">
+      Song results will appear here with artwork, preview audio, and Apple Music links.
+    </div>
+  </div>
+</section>
+
+<section class="resultsBlock">
+  <h3 class="resultsHeading">Albums</h3>
+  <div class="results" id="albumResults">
+    <div class="emptyState" style="grid-column:1/-1;">
+      Album results will appear here with artwork, release year, and album links.
+    </div>
+  </div>
+</section>
+
+</div>
+
+<div class="toastWrap" id="toastWrap"></div>
+
+<script>
+const searchInput = document.getElementById("searchInput");
+const searchButton = document.getElementById("searchButton");
+const songResultsContainer = document.getElementById("songResults");
+const albumResultsContainer = document.getElementById("albumResults");
+const statusText = document.getElementById("searchStatus");
+const quickChips = document.querySelectorAll("[data-query]");
+const welcomeTitle = document.getElementById("welcomeTitle");
+const welcomeSub = document.getElementById("welcomeSub");
+const userBadge = document.getElementById("userBadge");
+const actionFeedback = document.getElementById("actionFeedback");
+const recentSearchesRow = document.getElementById("recentSearchesRow");
+const recentSearchesEmpty = document.getElementById("recentSearchesEmpty");
+const clearRecentButton = document.getElementById("clearRecentButton");
+const recentPlayedResults = document.getElementById("recentPlayedResults");
+const recentPlayedEmpty = document.getElementById("recentPlayedEmpty");
+const toastWrap = document.getElementById("toastWrap");
+
+const likedCount = document.getElementById("likedCount");
+const playlistCount = document.getElementById("playlistCount");
+const recentCount = document.getElementById("recentCount");
+const playedCount = document.getElementById("playedCount");
+
+const params = new URLSearchParams(window.location.search);
+const username = params.get("username");
+
+const likedNavLink = document.getElementById("likedNavLink");
+const playlistsNavLink = document.getElementById("playlistsNavLink");
+
+if (username) {
+  likedNavLink.href = `/liked?username=${encodeURIComponent(username)}`;
+  playlistsNavLink.href = `/playlists?username=${encodeURIComponent(username)}`;
+  welcomeTitle.textContent = `Welcome back, ${username}.`;
+  welcomeSub.textContent = `You’re signed in and ready to explore more music, ${username}.`;
+  userBadge.textContent = username;
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function showFeedback(message, type = "success") {
+  actionFeedback.className = `feedback ${type}`;
+  actionFeedback.textContent = message;
+  showToast(message, type);
+}
+
+function showToast(message, type = "success") {
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  toastWrap.appendChild(toast);
+
+  setTimeout(() => {
+    toast.remove();
+  }, 2600);
+}
+
+function renderEmpty(container, message) {
+  container.innerHTML = `
+    <div class="emptyState" style="grid-column:1/-1;">
+      ${escapeHtml(message)}
+    </div>
+  `;
+}
+
+function getLikedSongs() {
+  return JSON.parse(localStorage.getItem("likedSongs") || "[]");
+}
+
+function saveLikedSongs(songs) {
+  localStorage.setItem("likedSongs", JSON.stringify(songs));
+}
+
+function getPlaylists() {
+  return JSON.parse(localStorage.getItem("playlists") || "[]");
+}
+
+function savePlaylists(playlists) {
+  localStorage.setItem("playlists", JSON.stringify(playlists));
+}
+
+function getRecentSearches() {
+  return JSON.parse(localStorage.getItem("recentSearches") || "[]");
+}
+
+function saveRecentSearches(searches) {
+  localStorage.setItem("recentSearches", JSON.stringify(searches));
+}
+
+function getRecentlyPlayed() {
+  return JSON.parse(localStorage.getItem("recentlyPlayed") || "[]");
+}
+
+function saveRecentlyPlayed(tracks) {
+  localStorage.setItem("recentlyPlayed", JSON.stringify(tracks));
+}
+
+function updateStats() {
+  likedCount.textContent = getLikedSongs().length;
+  playlistCount.textContent = getPlaylists().length;
+  recentCount.textContent = getRecentSearches().length;
+  playedCount.textContent = getRecentlyPlayed().length;
+}
+
+function saveSearchTerm(term) {
+  const trimmed = term.trim();
+  if (!trimmed) return;
+
+  let searches = getRecentSearches().filter(item => item.toLowerCase() !== trimmed.toLowerCase());
+  searches.unshift(trimmed);
+  searches = searches.slice(0, 5);
+  saveRecentSearches(searches);
+  renderRecentSearches();
+  updateStats();
+}
+
+function renderRecentSearches() {
+  const searches = getRecentSearches();
+
+  if (!searches.length) {
+    recentSearchesRow.innerHTML = "";
+    recentSearchesEmpty.style.display = "block";
+    return;
+  }
+
+  recentSearchesEmpty.style.display = "none";
+  recentSearchesRow.innerHTML = searches.map(term => `
+    <button class="quickChip" type="button" data-recent="${escapeHtml(term)}">${escapeHtml(term)}</button>
+  `).join("");
+
+  document.querySelectorAll("[data-recent]").forEach(button => {
+    button.addEventListener("click", () => {
+      const term = button.getAttribute("data-recent") || "";
+      searchInput.value = term;
+      performSearch(term);
+    });
+  });
+}
+
+function clearRecentSearches() {
+  saveRecentSearches([]);
+  renderRecentSearches();
+  updateStats();
+  showFeedback("Recent searches cleared.");
+}
+
+function savePlayedSong(song) {
+  const entry = {
+    song_id: song.trackId || song.collectionId || null,
+    track_name: song.trackName || "",
+    artist_name: song.artistName || "",
+    album_name: song.collectionName || "",
+    artwork_url: song.artworkUrl100 || "",
+    preview_url: song.previewUrl || "",
+    track_view_url: song.trackViewUrl || ""
+  };
+
+  let tracks = getRecentlyPlayed().filter(
+    item => String(item.song_id) !== String(entry.song_id)
+  );
+
+  tracks.unshift(entry);
+  tracks = tracks.slice(0, 4);
+  saveRecentlyPlayed(tracks);
+  renderRecentlyPlayed();
+  updateStats();
+}
+
+function renderRecentlyPlayed() {
+  const tracks = getRecentlyPlayed();
+
+  if (!tracks.length) {
+    recentPlayedResults.innerHTML = "";
+    recentPlayedEmpty.style.display = "block";
+    return;
+  }
+
+  recentPlayedEmpty.style.display = "none";
+
+  recentPlayedResults.innerHTML = tracks.map(track => `
+    <article class="songCard">
+      <img class="songArt" src="${escapeHtml(track.artwork_url || "")}" alt="${escapeHtml(track.track_name || "Artwork")}">
+      <div class="songInfo">
+        <h3>${escapeHtml(track.track_name || "Unknown Track")}</h3>
+        <p class="meta"><strong>Artist:</strong> ${escapeHtml(track.artist_name || "Unknown Artist")}</p>
+        <p class="meta"><strong>Album:</strong> ${escapeHtml(track.album_name || "Unknown Album")}</p>
+        <div class="linkRow">
+          ${track.track_view_url ? `<a class="btn primary" href="${track.track_view_url}" target="_blank" rel="noopener noreferrer">Open in Apple Music</a>` : ""}
+        </div>
+      </div>
+    </article>
+  `).join("");
+}
+
+function likeSong(song) {
+  if (!username) {
+    showFeedback("You need to be logged in to like songs.", "error");
+    return;
+  }
+
+  const payload = {
+    username,
+    song_id: song.trackId || song.collectionId || null,
+    track_name: song.trackName || "",
+    artist_name: song.artistName || "",
+    album_name: song.collectionName || "",
+    artwork_url: song.artworkUrl100 || "",
+    preview_url: song.previewUrl || "",
+    track_view_url: song.trackViewUrl || ""
+  };
+
+  const likedSongs = getLikedSongs();
+  const alreadyLiked = likedSongs.some(
+    item => String(item.song_id) === String(payload.song_id)
+  );
+
+  if (alreadyLiked) {
+    showFeedback(`"${song.trackName}" is already in your liked songs.`, "error");
+    return;
+  }
+
+  likedSongs.push(payload);
+  saveLikedSongs(likedSongs);
+  updateStats();
+  showFeedback(`Liked "${song.trackName}" successfully.`);
+  renderSongs(window.currentSongs);
+}
+
+function addSongToPlaylist(song) {
+  const playlists = getPlaylists();
+
+  if (!playlists.length) {
+    showFeedback("Create a playlist first on the Playlists page.", "error");
+    return;
+  }
+
+  let message = "Choose a playlist number:\n";
+  playlists.forEach((playlist, index) => {
+    message += `${index + 1}. ${playlist.name}\n`;
+  });
+
+  const choice = prompt(message);
+  if (!choice) return;
+
+  const selectedIndex = Number(choice) - 1;
+  if (Number.isNaN(selectedIndex) || selectedIndex < 0 || selectedIndex >= playlists.length) {
+    showFeedback("Invalid playlist selection.", "error");
+    return;
+  }
+
+  const selectedPlaylist = playlists[selectedIndex];
+  const songId = song.trackId || song.collectionId || null;
+
+  const alreadyExists = selectedPlaylist.songs.some(
+    item => String(item.song_id) === String(songId)
+  );
+
+  if (alreadyExists) {
+    showFeedback(`"${song.trackName}" is already in "${selectedPlaylist.name}".`, "error");
+    return;
+  }
+
+  selectedPlaylist.songs.push({
+    song_id: songId,
+    track_name: song.trackName || "",
+    artist_name: song.artistName || "",
+    album_name: song.collectionName || "",
+    artwork_url: song.artworkUrl100 || "",
+    preview_url: song.previewUrl || "",
+    track_view_url: song.trackViewUrl || ""
+  });
+
+  savePlaylists(playlists);
+  updateStats();
+  showFeedback(`Added "${song.trackName}" to "${selectedPlaylist.name}".`);
+}
+
+function isSongLiked(song) {
+  const songId = song.trackId || song.collectionId || null;
+  return getLikedSongs().some(item => String(item.song_id) === String(songId));
+}
+
+function attachPreviewTracking() {
+  document.querySelectorAll(".previewPlayer").forEach((player, index) => {
+    player.addEventListener("play", () => {
+      const song = window.currentSongs[index];
+      if (song) {
+        savePlayedSong(song);
+      }
+    });
+  });
+}
+
+function renderSongs(songs) {
+  if (!songs.length) {
+    renderEmpty(songResultsContainer, "No song results found.");
+    return;
+  }
+
+  songResultsContainer.innerHTML = songs.map((song, index) => {
+    const artwork = song.artworkUrl100 || "";
+    const trackName = escapeHtml(song.trackName || "Unknown Track");
+    const artistName = escapeHtml(song.artistName || "Unknown Artist");
+    const collectionName = escapeHtml(song.collectionName || "Unknown Album");
+    const previewUrl = song.previewUrl || "";
+    const trackViewUrl = song.trackViewUrl || "#";
+    const liked = isSongLiked(song);
+
+    return `
+      <article class="songCard">
+        <img class="songArt" src="${artwork}" alt="${trackName} album artwork">
+        <div class="songInfo">
+          <h3>${trackName}</h3>
+          <p class="meta"><strong>Artist:</strong> ${artistName}</p>
+          <p class="meta"><strong>Album:</strong> ${collectionName}</p>
+          ${
+            previewUrl
+              ? `<audio class="previewPlayer" controls src="${previewUrl}"></audio>`
+              : `<p class="meta">Preview unavailable for this track.</p>`
+          }
+          <div class="linkRow">
+            <a class="btn primary" href="${trackViewUrl}" target="_blank" rel="noopener noreferrer">
+              Open in Apple Music
+            </a>
+            <button class="btn secondary" type="button" onclick="likeSong(window.currentSongs[${index}])">
+              ${liked ? "Liked" : "Like"}
+            </button>
+            <button class="btn secondary" type="button" onclick="addSongToPlaylist(window.currentSongs[${index}])">
+              Add to Playlist
+            </button>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join("");
+
+  attachPreviewTracking();
+}
+
+function renderAlbums(albums) {
+  if (!albums.length) {
+    renderEmpty(albumResultsContainer, "No album results found.");
+    return;
+  }
+
+  albumResultsContainer.innerHTML = albums.map(album => {
+    const artwork = album.artworkUrl100 || "";
+    const collectionName = escapeHtml(album.collectionName || "Unknown Album");
+    const artistName = escapeHtml(album.artistName || "Unknown Artist");
+    const releaseDate = album.releaseDate
+      ? new Date(album.releaseDate).getFullYear()
+      : "Unknown Year";
+    const collectionViewUrl = album.collectionViewUrl || "#";
+
+    return `
+      <article class="albumCard">
+        <img class="albumArt" src="${artwork}" alt="${collectionName} album artwork">
+        <div class="albumInfo">
+          <h3>${collectionName}</h3>
+          <p class="meta"><strong>Artist:</strong> ${artistName}</p>
+          <p class="meta"><strong>Year:</strong> ${escapeHtml(releaseDate)}</p>
+          <div class="linkRow">
+            <a class="btn primary" href="${collectionViewUrl}" target="_blank" rel="noopener noreferrer">
+              View Album on Apple Music
+            </a>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join("");
+}
+
+async function performSearch(query) {
+  const trimmed = query.trim();
+
+  if (!trimmed) {
+    statusText.textContent = "Please enter a search term.";
+    renderEmpty(songResultsContainer, "Add a search term to load songs.");
+    renderEmpty(albumResultsContainer, "Add a search term to load albums.");
+    return;
+  }
+
+  saveSearchTerm(trimmed);
+
+  statusText.textContent = `Searching for "${trimmed}"...`;
+  songResultsContainer.innerHTML = "";
+  albumResultsContainer.innerHTML = "";
+
+  try {
+    const response = await fetch(`/api/search?q=${encodeURIComponent(trimmed)}`);
+    if (!response.ok) {
+      throw new Error("Search request failed");
+    }
+
+    const data = await response.json();
+    const songs = Array.isArray(data.songs) ? data.songs : [];
+    const albums = Array.isArray(data.albums) ? data.albums : [];
+
+    window.currentSongs = songs;
+
+    statusText.textContent =
+      `Showing ${songs.length} song result${songs.length === 1 ? "" : "s"} and ` +
+      `${albums.length} album result${albums.length === 1 ? "" : "s"} for "${trimmed}".`;
+
+    renderSongs(songs);
+    renderAlbums(albums);
+  } catch (error) {
+    statusText.textContent = "Search failed. Please try again.";
+    renderEmpty(songResultsContainer, "Something went wrong while fetching song results.");
+    renderEmpty(albumResultsContainer, "Something went wrong while fetching album results.");
+  }
+}
+
+window.currentSongs = [];
+window.likeSong = likeSong;
+window.addSongToPlaylist = addSongToPlaylist;
+
+searchButton.addEventListener("click", () => {
+  performSearch(searchInput.value);
+});
+
+searchInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    performSearch(searchInput.value);
+  }
+});
+
+quickChips.forEach(chip => {
+  chip.addEventListener("click", () => {
+    const query = chip.dataset.query || "";
+    searchInput.value = query;
+    performSearch(query);
+  });
+});
+
+clearRecentButton.addEventListener("click", clearRecentSearches);
+
+renderRecentSearches();
+renderRecentlyPlayed();
+updateStats();
+</script>
+
+</body>
+</html>

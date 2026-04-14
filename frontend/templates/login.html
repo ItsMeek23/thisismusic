@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Login | THIS IS MUSIC</title>
+
+<style>
+:root{
+--ink:#07111f;
+--ink2:#0d1d34;
+--panel:rgba(10,23,42,.74);
+--panelSoft:rgba(255,255,255,.06);
+--line:rgba(188,218,255,.18);
+--glow:rgba(84,170,255,.28);
+--blue:#2d74ff;
+--blueSoft:#7fc1ff;
+--mint:#79f0cf;
+--gold:#ffd588;
+--text:#eef5ff;
+--muted:rgba(238,245,255,.72);
+--shadow:0 24px 80px rgba(0,0,0,.42);
+}
+
+*{box-sizing:border-box;}
+
+body{
+margin:0;
+min-height:100vh;
+font-family:"Trebuchet MS","Avenir Next",sans-serif;
+color:var(--text);
+background:
+radial-gradient(900px 520px at 18% 12%, rgba(127,193,255,.18), transparent 58%),
+radial-gradient(900px 520px at 84% 20%, rgba(121,240,207,.12), transparent 60%),
+linear-gradient(180deg,var(--ink),var(--ink2));
+padding:28px;
+}
+
+.page{
+max-width:1180px;
+margin:0 auto;
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:16px;
+margin-bottom:24px;
+padding:14px 18px;
+border:1px solid var(--line);
+border-radius:22px;
+background:rgba(255,255,255,.04);
+backdrop-filter:blur(18px);
+box-shadow:var(--shadow);
+}
+
+.brand{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.logo{
+width:42px;
+height:42px;
+border-radius:14px;
+background:
+linear-gradient(145deg,var(--mint),transparent 35%),
+linear-gradient(135deg,var(--blue),var(--blueSoft));
+box-shadow:0 16px 36px rgba(45,116,255,.35);
+}
+
+.navLink{
+color:var(--text);
+text-decoration:none;
+font-size:14px;
+padding:10px 14px;
+border-radius:999px;
+border:1px solid var(--line);
+background:rgba(255,255,255,.04);
+}
+
+.layout{
+display:grid;
+grid-template-columns:.95fr 1.05fr;
+gap:22px;
+}
+
+.sidePanel,
+.authCard{
+border:1px solid var(--line);
+border-radius:30px;
+background:var(--panel);
+box-shadow:var(--shadow);
+backdrop-filter:blur(18px);
+}
+
+.sidePanel{
+padding:34px;
+}
+
+.eyebrow{
+display:inline-flex;
+align-items:center;
+gap:8px;
+padding:8px 12px;
+border-radius:999px;
+background:rgba(255,255,255,.05);
+border:1px solid var(--line);
+font-size:12px;
+letter-spacing:.08em;
+text-transform:uppercase;
+color:var(--muted);
+}
+
+.sidePanel h1,
+.authCard h1{
+font-family:Georgia,"Times New Roman",serif;
+line-height:1;
+margin:18px 0 14px;
+}
+
+.sidePanel h1{
+font-size:56px;
+max-width:11ch;
+}
+
+.sidePanel p{
+margin:0;
+color:var(--muted);
+line-height:1.7;
+}
+
+.featureList{
+display:grid;
+gap:12px;
+margin-top:28px;
+}
+
+.featureItem{
+padding:16px 18px;
+border-radius:20px;
+background:var(--panelSoft);
+border:1px solid var(--line);
+}
+
+.featureItem strong{
+display:block;
+margin-bottom:6px;
+font-size:15px;
+}
+
+.featureItem span{
+font-size:14px;
+color:var(--muted);
+line-height:1.6;
+}
+
+.statusBand{
+margin-top:20px;
+padding:16px 18px;
+border-radius:20px;
+border:1px solid rgba(255,213,136,.22);
+background:rgba(255,213,136,.08);
+color:var(--muted);
+line-height:1.6;
+font-size:14px;
+}
+
+.statusBand strong{
+color:var(--gold);
+}
+
+.authCard{
+padding:30px;
+}
+
+.authCard h1{
+font-size:42px;
+}
+
+.sub{
+margin:0 0 22px;
+color:var(--muted);
+line-height:1.7;
+}
+
+.inputWrap{
+margin-bottom:16px;
+}
+
+label{
+display:block;
+margin-bottom:8px;
+font-size:14px;
+font-weight:700;
+}
+
+.inputRow{
+position:relative;
+}
+
+input{
+width:100%;
+padding:15px 16px;
+border-radius:16px;
+border:1px solid var(--line);
+background:rgba(0,0,0,.24);
+color:var(--text);
+outline:none;
+font-size:15px;
+transition:border-color .2s, box-shadow .2s, transform .2s;
+}
+
+.passwordInput{
+padding-right:92px;
+}
+
+input:focus{
+border-color:rgba(127,193,255,.55);
+box-shadow:0 0 0 4px rgba(45,116,255,.14);
+transform:translateY(-1px);
+}
+
+input::placeholder{
+color:rgba(238,245,255,.44);
+}
+
+.toggleBtn{
+position:absolute;
+right:10px;
+top:50%;
+transform:translateY(-50%);
+border:1px solid var(--line);
+background:rgba(255,255,255,.05);
+color:var(--text);
+border-radius:999px;
+padding:7px 12px;
+font-size:12px;
+cursor:pointer;
+}
+
+.forgotRow{
+display:flex;
+justify-content:flex-end;
+margin:-4px 0 18px;
+}
+
+.forgotLink{
+color:var(--blueSoft);
+text-decoration:none;
+font-size:14px;
+font-weight:700;
+}
+
+.forgotLink:hover{
+text-decoration:underline;
+}
+
+.message{
+display:none;
+margin:0 0 16px;
+padding:14px 16px;
+border-radius:18px;
+font-size:14px;
+line-height:1.6;
+}
+
+.message.error{
+background:rgba(255,87,87,.10);
+border:1px solid rgba(255,87,87,.25);
+color:#ffd6d6;
+}
+
+.message.success{
+background:rgba(121,240,207,.10);
+border:1px solid rgba(121,240,207,.25);
+color:#d8fff2;
+}
+
+.btn{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+width:100%;
+padding:15px 18px;
+border:none;
+border-radius:999px;
+background:linear-gradient(135deg,var(--blue),var(--blueSoft));
+color:#fff;
+font-weight:800;
+font-size:15px;
+cursor:pointer;
+box-shadow:0 18px 30px rgba(45,116,255,.28);
+transition:opacity .2s, transform .2s;
+}
+
+.btn:hover{
+transform:translateY(-1px);
+}
+
+.btn:disabled{
+opacity:.65;
+cursor:not-allowed;
+transform:none;
+}
+
+.links{
+margin-top:18px;
+display:flex;
+flex-direction:column;
+gap:10px;
+align-items:center;
+}
+
+.links a{
+color:var(--text);
+text-decoration:none;
+}
+
+.links a:hover,
+.navLink:hover{
+text-decoration:underline;
+}
+
+@media (max-width: 920px){
+.layout{
+grid-template-columns:1fr;
+}
+.sidePanel h1{
+font-size:46px;
+}
+}
+
+@media (max-width: 620px){
+body{
+padding:18px;
+}
+.topbar{
+flex-direction:column;
+align-items:flex-start;
+}
+.sidePanel,
+.authCard{
+padding:24px;
+border-radius:24px;
+}
+.sidePanel h1,
+.authCard h1{
+font-size:38px;
+}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo"></div>
+      <div>
+        <strong>THIS IS MUSIC</strong><br>
+        <span style="font-size:12px;color:var(--muted);">Sign in and get back to your music.</span>
+      </div>
+    </div>
+    <a class="navLink" href="/">Back to Home</a>
+  </header>
+
+  <div class="layout">
+    <section class="sidePanel">
+      <span class="eyebrow">Welcome Back</span>
+      <h1>Pick up where the music left off.</h1>
+      <p>
+        Log in to continue your experience, access your account, and move back into the app with your saved identity.
+      </p>
+
+      <div class="featureList">
+        <div class="featureItem">
+          <strong>Access your account</strong>
+          <span>Use your username and password to get back into the platform.</span>
+        </div>
+        <div class="featureItem">
+          <strong>Continue exploring</strong>
+          <span>Step back into search, playlists, likes, and the rest of your experience.</span>
+        </div>
+        <div class="featureItem">
+          <strong>Keep it simple</strong>
+          <span>Your login is based on your username and password.</span>
+        </div>
+      </div>
+
+      <div class="statusBand">
+        <strong>Reminder:</strong> login uses your username and password, not your email.
+      </div>
+    </section>
+
+    <section class="authCard">
+      <span class="eyebrow">Account Login</span>
+      <h1>Log In</h1>
+      <p class="sub">
+        Enter your account details to continue into THIS IS MUSIC.
+      </p>
+
+      <div id="errorBox" class="message error"></div>
+      <div id="successBox" class="message success"></div>
+
+      <form id="loginForm">
+        <div class="inputWrap">
+          <label for="username">Username</label>
+          <div class="inputRow">
+            <input id="username" type="text" name="username" placeholder="Enter your username" autocomplete="username" required>
+          </div>
+        </div>
+
+        <div class="inputWrap">
+          <label for="password">Password</label>
+          <div class="inputRow">
+            <input id="password" class="passwordInput" type="password" name="password" placeholder="Enter your password" autocomplete="current-password" required>
+            <button type="button" class="toggleBtn" data-target="password">Show</button>
+          </div>
+        </div>
+
+        <div class="forgotRow">
+          <a class="forgotLink" href="/forgot-password">Forgot Password?</a>
+        </div>
+
+        <button id="submitBtn" type="submit" class="btn">Log In</button>
+      </form>
+
+      <div class="links">
+        <a href="/register">Need an account? Register</a>
+        <a href="/">Explore the homepage</a>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+const loginForm = document.getElementById("loginForm");
+const errorBox = document.getElementById("errorBox");
+const successBox = document.getElementById("successBox");
+const submitBtn = document.getElementById("submitBtn");
+const formInputs = loginForm.querySelectorAll("input");
+
+function showError(message) {
+  errorBox.textContent = message;
+  errorBox.style.display = "block";
+  successBox.style.display = "none";
+}
+
+function showSuccess(message) {
+  successBox.textContent = message;
+  successBox.style.display = "block";
+  errorBox.style.display = "none";
+}
+
+function clearMessages() {
+  errorBox.style.display = "none";
+  successBox.style.display = "none";
+}
+
+function setLoading(isLoading, text) {
+  submitBtn.disabled = isLoading;
+  submitBtn.textContent = isLoading ? text : "Log In";
+}
+
+document.querySelectorAll(".toggleBtn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const target = document.getElementById(btn.dataset.target);
+    const isPassword = target.type === "password";
+    target.type = isPassword ? "text" : "password";
+    btn.textContent = isPassword ? "Hide" : "Show";
+  });
+});
+
+formInputs.forEach((input) => {
+  input.addEventListener("input", clearMessages);
+});
+
+loginForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  clearMessages();
+
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  if (!username || !password) {
+    showError("Username and password are required.");
+    return;
+  }
+
+  try {
+    setLoading(true, "Logging In...");
+
+    const response = await fetch("/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ username, password })
+    });
+
+    const data = await response.json();
+
+    if (data.status === "success") {
+      showSuccess(data.message || "Login successful. Redirecting...");
+      setTimeout(() => {
+        window.location.href = "/home";
+      }, 800);
+      return;
+    }
+
+    showError(data.message || "Login failed.");
+  } catch (error) {
+    showError("Login request failed. Please try again.");
+  } finally {
+    setLoading(false, "");
+  }
+});
+</script>
+</body>
+</html>

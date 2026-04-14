@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trending Songs | THIS IS MUSIC</title>
+
+<style>
+:root{
+--ink:#07111f;
+--ink2:#0d1d34;
+--panel:rgba(10,23,42,.74);
+--panelSoft:rgba(255,255,255,.06);
+--line:rgba(188,218,255,.18);
+--blue:#2d74ff;
+--blueSoft:#7fc1ff;
+--mint:#79f0cf;
+--text:#eef5ff;
+--muted:rgba(238,245,255,.72);
+--shadow:0 24px 80px rgba(0,0,0,.42);
+--success:#79f0cf;
+--danger:#ff8ca8;
+}
+
+*{box-sizing:border-box;}
+
+body{
+margin:0;
+font-family:"Trebuchet MS","Avenir Next",sans-serif;
+color:var(--text);
+background:
+radial-gradient(900px 520px at 12% 12%, rgba(127,193,255,.18), transparent 58%),
+radial-gradient(900px 520px at 88% 20%, rgba(121,240,207,.12), transparent 60%),
+linear-gradient(180deg,var(--ink),var(--ink2));
+min-height:100vh;
+padding:28px;
+}
+
+.page{
+max-width:1180px;
+margin:auto;
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:14px 18px;
+border-radius:22px;
+background:rgba(255,255,255,.04);
+border:1px solid var(--line);
+box-shadow:var(--shadow);
+margin-bottom:24px;
+gap:16px;
+flex-wrap:wrap;
+}
+
+.brand{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.logo{
+width:42px;
+height:42px;
+border-radius:14px;
+background:
+linear-gradient(145deg,var(--mint),transparent 35%),
+linear-gradient(135deg,var(--blue),var(--blueSoft));
+}
+
+.navActions{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.btn{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+padding:10px 16px;
+border-radius:999px;
+border:1px solid var(--line);
+background:rgba(255,255,255,.06);
+color:var(--text);
+text-decoration:none;
+font-weight:700;
+cursor:pointer;
+transition:transform .2s, background .2s;
+}
+
+.btn:hover{
+transform:translateY(-1px);
+background:rgba(255,255,255,.12);
+}
+
+.btn.primary{
+background:linear-gradient(135deg,var(--blue),var(--blueSoft));
+border:none;
+}
+
+.btn.secondary{
+background:rgba(255,255,255,.06);
+border:1px solid var(--line);
+}
+
+.hero{
+border-radius:30px;
+border:1px solid var(--line);
+background:var(--panel);
+padding:32px;
+box-shadow:var(--shadow);
+margin-bottom:24px;
+}
+
+.badge{
+display:inline-flex;
+align-items:center;
+gap:8px;
+padding:8px 12px;
+border-radius:999px;
+background:rgba(255,255,255,.05);
+border:1px solid var(--line);
+font-size:12px;
+letter-spacing:.08em;
+text-transform:uppercase;
+color:var(--muted);
+margin-bottom:14px;
+}
+
+.hero h1{
+font-family:Georgia,"Times New Roman",serif;
+font-size:46px;
+margin:0 0 10px;
+line-height:1;
+}
+
+.hero p{
+color:var(--muted);
+margin:0;
+line-height:1.7;
+}
+
+.status{
+margin-top:18px;
+min-height:20px;
+color:var(--muted);
+font-size:14px;
+}
+
+.results{
+display:grid;
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:18px;
+margin-top:24px;
+}
+
+.songCard{
+display:flex;
+gap:16px;
+padding:18px;
+border-radius:22px;
+background:rgba(255,255,255,.05);
+border:1px solid var(--line);
+align-items:flex-start;
+}
+
+.songArt{
+width:112px;
+height:112px;
+border-radius:18px;
+object-fit:cover;
+flex-shrink:0;
+background:rgba(255,255,255,.08);
+}
+
+.songInfo{
+flex:1;
+min-width:0;
+}
+
+.songInfo h3{
+margin:0 0 8px;
+font-size:20px;
+line-height:1.2;
+}
+
+.meta{
+margin:0 0 6px;
+color:var(--muted);
+font-size:14px;
+line-height:1.6;
+}
+
+.previewPlayer{
+width:100%;
+margin-top:12px;
+border-radius:999px;
+}
+
+.linkRow{
+display:flex;
+gap:10px;
+margin-top:14px;
+flex-wrap:wrap;
+}
+
+.emptyState{
+padding:24px;
+border-radius:20px;
+border:1px dashed var(--line);
+background:rgba(255,255,255,.03);
+color:var(--muted);
+text-align:center;
+line-height:1.7;
+}
+
+.toastWrap{
+position:fixed;
+right:22px;
+bottom:22px;
+display:flex;
+flex-direction:column;
+gap:10px;
+z-index:999;
+}
+
+.toast{
+min-width:240px;
+max-width:320px;
+padding:14px 16px;
+border-radius:16px;
+background:rgba(10,23,42,.94);
+border:1px solid var(--line);
+box-shadow:var(--shadow);
+font-size:14px;
+animation:slideIn .18s ease;
+}
+
+.toast.success{
+border-color:rgba(121,240,207,.28);
+color:var(--success);
+}
+
+.toast.error{
+border-color:rgba(255,140,168,.28);
+color:var(--danger);
+}
+
+@keyframes slideIn{
+from{opacity:0; transform:translateY(10px);}
+to{opacity:1; transform:translateY(0);}
+}
+
+@media(max-width:900px){
+.results{
+grid-template-columns:1fr;
+}
+
+.hero h1{
+font-size:36px;
+}
+}
+
+@media(max-width:700px){
+.songCard{
+flex-direction:column;
+}
+
+.songArt{
+width:100%;
+height:auto;
+aspect-ratio:1/1;
+}
+}
+</style>
+</head>
+
+<body>
+<div class="page">
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo"></div>
+    <div>
+      <strong>THIS IS MUSIC</strong><br>
+      <span style="font-size:12px;color:var(--muted)">Trending picks for your dashboard</span>
+    </div>
+  </div>
+
+  <div class="navActions">
+    <a class="btn" id="homeLink" href="/home">Home</a>
+    <a class="btn secondary" id="likedNavLink" href="/liked">Liked Songs</a>
+    <a class="btn secondary" id="historyNavLink" href="/history">History</a>
+    <a class="btn secondary" id="playlistsNavLink" href="/playlists">Playlists</a>
+    <a class="btn secondary" id="trendingNavLink" href="/trending">Trending</a>
+    <a class="btn secondary" id="profileNavLink" href="/profile">Profile</a>
+    <a class="btn primary" href="/logout">Log Out</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="badge" id="userBadge">Trending</div>
+  <h1>Trending Songs</h1>
+  <p>
+    A simple curated list that looks alive, loads fast, and keeps your demo from turning into a haunted house.
+  </p>
+  <div class="status" id="statusText">Loading trending songs...</div>
+</section>
+
+<section class="results" id="trendingResults">
+  <div class="emptyState" style="grid-column:1/-1;">
+    Trending songs will appear here.
+  </div>
+</section>
+
+</div>
+
+<div class="toastWrap" id="toastWrap"></div>
+
+<script>
+const trendingResults = document.getElementById("trendingResults");
+const statusText = document.getElementById("statusText");
+const toastWrap = document.getElementById("toastWrap");
+const userBadge = document.getElementById("userBadge");
+const homeLink = document.getElementById("homeLink");
+const likedNavLink = document.getElementById("likedNavLink");
+const historyNavLink = document.getElementById("historyNavLink");
+const playlistsNavLink = document.getElementById("playlistsNavLink");
+const trendingNavLink = document.getElementById("trendingNavLink");
+const profileNavLink = document.getElementById("profileNavLink");
+
+function getCookie(name) {
+  const cookieString = document.cookie || "";
+  const cookies = cookieString.split(";");
+
+  for (const cookie of cookies) {
+    const trimmed = cookie.trim();
+    if (trimmed.startsWith(name + "=")) {
+      return decodeURIComponent(trimmed.substring(name.length + 1));
+    }
+  }
+
+  return "";
+}
+
+const username = getCookie("username");
+
+if (username) {
+  userBadge.textContent = username;
+  homeLink.href = `/home?username=${encodeURIComponent(username)}`;
+  likedNavLink.href = `/liked?username=${encodeURIComponent(username)}`;
+  historyNavLink.href = `/history?username=${encodeURIComponent(username)}`;
+  playlistsNavLink.href = `/playlists?username=${encodeURIComponent(username)}`;
+  trendingNavLink.href = `/trending?username=${encodeURIComponent(username)}`;
+  profileNavLink.href = `/profile?username=${encodeURIComponent(username)}`;
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function showToast(message, type = "success") {
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  toastWrap.appendChild(toast);
+
+  setTimeout(() => {
+    toast.remove();
+  }, 2400);
+}
+
+async function fetchLikedSongs() {
+  try {
+    const response = await fetch("/api/liked-songs", {
+      headers: {
+        "Accept": "application/json"
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to load liked songs");
+    }
+
+    const data = await response.json();
+    return Array.isArray(data.songs) ? data.songs : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function getRecentlyPlayed() {
+  return JSON.parse(localStorage.getItem("recentlyPlayed") || "[]");
+}
+
+function saveRecentlyPlayed(tracks) {
+  localStorage.setItem("recentlyPlayed", JSON.stringify(tracks));
+}
+
+function savePlayedSong(song) {
+  const entry = {
+    song_id: String(song.song_id || ""),
+    track_name: song.track_name || "",
+    artist_name: song.artist_name || "",
+    album_name: song.album_name || "",
+    artwork_url: song.artwork_url || "",
+    preview_url: song.preview_url || "",
+    track_view_url: song.track_view_url || ""
+  };
+
+  if (!entry.song_id) {
+    return;
+  }
+
+  let tracks = getRecentlyPlayed().filter(item => String(item.song_id) !== entry.song_id);
+  tracks.unshift(entry);
+  tracks = tracks.slice(0, 12);
+  saveRecentlyPlayed(tracks);
+}
+
+function attachPreviewTracking() {
+  document.querySelectorAll(".previewPlayer").forEach((player, index) => {
+    player.addEventListener("play", () => {
+      const song = window.trendingSongs[index];
+      if (song) {
+        savePlayedSong(song);
+      }
+    });
+  });
+}
+
+function isSongLiked(song) {
+  const songId = String(song.song_id || "");
+  return window.cachedLikedSongIds.has(songId);
+}
+
+async function refreshLikedCache() {
+  const likedSongs = await fetchLikedSongs();
+  window.cachedLikedSongIds = new Set(
+    likedSongs.map(song => String(song.song_id || ""))
+  );
+}
+
+async function likeSong(song) {
+  if (!username) {
+    showToast("You need to be logged in to like songs.", "error");
+    return;
+  }
+
+  const payload = {
+    username,
+    song_id: String(song.song_id || ""),
+    track_name: song.track_name || "",
+    artist_name: song.artist_name || "",
+    album_name: song.album_name || "",
+    artwork_url: song.artwork_url || "",
+    preview_url: song.preview_url || "",
+    track_view_url: song.track_view_url || ""
+  };
+
+  if (!payload.song_id) {
+    showToast("This song could not be saved.", "error");
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/like-song", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || data.status !== "success") {
+      throw new Error(data.message || "Failed to like song");
+    }
+
+    await refreshLikedCache();
+    renderTrendingSongs(window.trendingSongs);
+    showToast(data.message || `Liked "${payload.track_name}".`, "success");
+  } catch (error) {
+    showToast(error.message || "Could not like this song.", "error");
+  }
+}
+
+function renderEmpty(message) {
+  trendingResults.innerHTML = `
+    <div class="emptyState" style="grid-column:1/-1;">
+      ${escapeHtml(message)}
+    </div>
+  `;
+}
+
+function renderTrendingSongs(songs) {
+  if (!songs.length) {
+    renderEmpty("No trending songs available right now.");
+    return;
+  }
+
+  trendingResults.innerHTML = songs.map((song, index) => {
+    const liked = isSongLiked(song);
+
+    return `
+      <article class="songCard">
+        <img class="songArt" src="${escapeHtml(song.artwork_url)}" alt="${escapeHtml(song.track_name)} artwork">
+        <div class="songInfo">
+          <h3>${escapeHtml(song.track_name)}</h3>
+          <p class="meta"><strong>Artist:</strong> ${escapeHtml(song.artist_name)}</p>
+          <p class="meta"><strong>Album:</strong> ${escapeHtml(song.album_name)}</p>
+          ${
+            song.preview_url
+              ? `<audio class="previewPlayer" controls src="${escapeHtml(song.preview_url)}"></audio>`
+              : `<p class="meta">Preview unavailable for this track.</p>`
+          }
+          <div class="linkRow">
+            <a class="btn primary" href="${escapeHtml(song.track_view_url)}" target="_blank" rel="noopener noreferrer">
+              Open in Apple Music
+            </a>
+            <button class="btn secondary" type="button" onclick="likeSong(window.trendingSongs[${index}])">
+              ${liked ? "Liked" : "Like"}
+            </button>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join("");
+
+  attachPreviewTracking();
+}
+
+window.trendingSongs = [
+  {
+    song_id: "trend-1",
+    track_name: "Blinding Lights",
+    artist_name: "The Weeknd",
+    album_name: "After Hours",
+    artwork_url: "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/0d/0f/e2/0d0fe277-b153-810c-f6a1-2cbd4f4a0dd7/20UMGIM01276.rgb.jpg/600x600bb.jpg",
+    preview_url: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/31/c7/32/31c73220-3e4e-2260-2fa8-f7582428e3df/mzaf_11220948574328491577.plus.aac.p.m4a",
+    track_view_url: "https://music.apple.com/us/album/blinding-lights/1499378108?i=1499378114"
+  },
+  {
+    song_id: "trend-2",
+    track_name: "Levitating",
+    artist_name: "Dua Lipa",
+    album_name: "Future Nostalgia",
+    artwork_url: "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/88/3b/9e/883b9e94-9738-b76c-8cd0-5642f58470ef/190295132515.jpg/600x600bb.jpg",
+    preview_url: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/92/85/d4/9285d4fe-a77c-1a6c-2ef2-759bf64b6b72/mzaf_15533346812396260724.plus.aac.p.m4a",
+    track_view_url: "https://music.apple.com/us/album/levitating/1538003494?i=1538003497"
+  },
+  {
+    song_id: "trend-3",
+    track_name: "Starboy",
+    artist_name: "The Weeknd",
+    album_name: "Starboy",
+    artwork_url: "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/57/9a/73/579a73e3-88fa-1607-4c3d-fce11d0fcb37/16UMGIM59818.rgb.jpg/600x600bb.jpg",
+    preview_url: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview122/v4/01/44/0c/01440c15-b4e4-6238-9285-464aab2b4c0f/mzaf_3401240074936293782.plus.aac.p.m4a",
+    track_view_url: "https://music.apple.com/us/album/starboy-feat-daft-punk/1440871366?i=1440871376"
+  },
+  {
+    song_id: "trend-4",
+    track_name: "SICKO MODE",
+    artist_name: "Travis Scott",
+    album_name: "ASTROWORLD",
+    artwork_url: "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/8a/6a/9e/8a6a9ec5-af32-a6ee-079c-c958b2b61b63/886446874593.jpg/600x600bb.jpg",
+    preview_url: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview118/v4/c9/9d/41/c99d4155-e91e-a521-05ee-2397955da760/mzaf_8310825144805156720.plus.aac.p.m4a",
+    track_view_url: "https://music.apple.com/us/album/sicko-mode/1421241217?i=1421241218"
+  },
+  {
+    song_id: "trend-5",
+    track_name: "good 4 u",
+    artist_name: "Olivia Rodrigo",
+    album_name: "SOUR",
+    artwork_url: "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/08/5b/f8/085bf838-4f0c-a2d7-f98d-f0f098e8d91c/21UMGIM26092.rgb.jpg/600x600bb.jpg",
+    preview_url: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/8a/50/f6/8a50f6da-a381-c475-f2c3-bebdb928f0d8/mzaf_5168927701255801089.plus.aac.p.m4a",
+    track_view_url: "https://music.apple.com/us/album/good-4-u/1560735414?i=1560735416"
+  },
+  {
+    song_id: "trend-6",
+    track_name: "As It Was",
+    artist_name: "Harry Styles",
+    album_name: "Harry's House",
+    artwork_url: "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/2f/e4/09/2fe40993-372d-49d6-18a9-d19d1ba4f843/196589369297.jpg/600x600bb.jpg",
+    preview_url: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/c1/fe/03/c1fe0397-ab8f-36cb-c0f2-3c4f31d68c5d/mzaf_15777811390726554636.plus.aac.p.m4a",
+    track_view_url: "https://music.apple.com/us/album/as-it-was/1615584999?i=1615585001"
+  }
+];
+
+window.cachedLikedSongIds = new Set();
+window.likeSong = likeSong;
+
+(async function initTrendingPage() {
+  await refreshLikedCache();
+  window.trendingSongs.sort(() => Math.random() - 0.5);
+  renderTrendingSongs(window.trendingSongs);
+  statusText.textContent = `Showing ${window.trendingSongs.length} trending songs.`;
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,10 @@
+venv/
+.venv/
+composer/hosts.env
+__pycache__/
+*.pyc
+*.log
+.env
+.env.*
+node_modules/
+.DS_Store

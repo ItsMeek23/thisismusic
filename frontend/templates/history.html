@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Listening History | THIS IS MUSIC</title>
+
+<style>
+:root{
+--ink:#07111f;
+--ink2:#0d1d34;
+--panel:rgba(10,23,42,.74);
+--panelSoft:rgba(255,255,255,.06);
+--line:rgba(188,218,255,.18);
+--blue:#2d74ff;
+--blueSoft:#7fc1ff;
+--mint:#79f0cf;
+--text:#eef5ff;
+--muted:rgba(238,245,255,.72);
+--shadow:0 24px 80px rgba(0,0,0,.42);
+--danger:#ff8ca8;
+--success:#79f0cf;
+}
+
+*{box-sizing:border-box;}
+
+body{
+margin:0;
+font-family:"Trebuchet MS","Avenir Next",sans-serif;
+color:var(--text);
+background:
+radial-gradient(900px 520px at 12% 12%, rgba(127,193,255,.18), transparent 58%),
+radial-gradient(900px 520px at 88% 20%, rgba(121,240,207,.12), transparent 60%),
+linear-gradient(180deg,var(--ink),var(--ink2));
+min-height:100vh;
+padding:28px;
+}
+
+.page{
+max-width:1180px;
+margin:auto;
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:14px 18px;
+border-radius:22px;
+background:rgba(255,255,255,.04);
+border:1px solid var(--line);
+box-shadow:var(--shadow);
+margin-bottom:24px;
+gap:16px;
+flex-wrap:wrap;
+}
+
+.brand{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.logo{
+width:42px;
+height:42px;
+border-radius:14px;
+background:
+linear-gradient(145deg,var(--mint),transparent 35%),
+linear-gradient(135deg,var(--blue),var(--blueSoft));
+}
+
+.navActions{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.btn{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+padding:10px 16px;
+border-radius:999px;
+border:1px solid var(--line);
+background:rgba(255,255,255,.06);
+color:var(--text);
+text-decoration:none;
+font-weight:700;
+cursor:pointer;
+transition:transform .18s ease, background .18s ease, border-color .18s ease;
+white-space:nowrap;
+}
+
+.btn:hover{
+transform:translateY(-1px);
+background:rgba(255,255,255,.12);
+}
+
+.btn.primary{
+background:linear-gradient(135deg,var(--blue),var(--blueSoft));
+border:none;
+}
+
+.btn.secondary{
+background:rgba(255,255,255,.06);
+border:1px solid var(--line);
+}
+
+.btn.danger{
+border-color:rgba(255,140,168,.28);
+background:rgba(255,140,168,.10);
+color:var(--danger);
+}
+
+.section{
+border-radius:30px;
+border:1px solid var(--line);
+background:var(--panel);
+padding:32px;
+box-shadow:var(--shadow);
+}
+
+.userBadge{
+display:inline-flex;
+align-items:center;
+gap:8px;
+padding:8px 12px;
+border-radius:999px;
+background:rgba(255,255,255,.05);
+border:1px solid var(--line);
+font-size:12px;
+letter-spacing:.08em;
+text-transform:uppercase;
+color:var(--muted);
+margin-bottom:14px;
+}
+
+.section h1{
+font-family:Georgia,"Times New Roman",serif;
+font-size:42px;
+margin:0 0 12px;
+}
+
+.section p{
+margin:0;
+color:var(--muted);
+line-height:1.7;
+}
+
+.statsRow{
+display:flex;
+gap:12px;
+flex-wrap:wrap;
+margin-top:18px;
+margin-bottom:8px;
+}
+
+.statChip{
+padding:10px 14px;
+border-radius:999px;
+border:1px solid var(--line);
+background:rgba(255,255,255,.05);
+color:var(--muted);
+font-size:13px;
+}
+
+.results{
+display:flex;
+flex-direction:column;
+gap:8px;
+margin-top:24px;
+}
+
+.songRow{
+display:flex;
+align-items:center;
+gap:14px;
+padding:10px 14px;
+border-radius:14px;
+background:rgba(255,255,255,.04);
+border:1px solid transparent;
+transition:background .15s ease, border-color .15s ease;
+}
+
+.songRow:hover{
+background:rgba(255,255,255,.08);
+border-color:var(--line);
+}
+
+.songArt{
+width:52px;
+height:52px;
+border-radius:8px;
+object-fit:cover;
+flex-shrink:0;
+background:rgba(255,255,255,.08);
+}
+
+.songMain{
+flex:1;
+min-width:0;
+}
+
+.songTitle{
+font-size:15px;
+font-weight:700;
+margin:0 0 3px;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+}
+
+.songMeta{
+font-size:12px;
+color:var(--muted);
+margin:0;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+}
+
+.songActions{
+display:flex;
+gap:8px;
+align-items:center;
+flex-wrap:wrap;
+}
+
+.emptyState{
+margin-top:24px;
+padding:24px;
+border-radius:20px;
+border:1px dashed var(--line);
+background:rgba(255,255,255,.03);
+color:var(--muted);
+text-align:center;
+line-height:1.7;
+}
+
+.feedback{
+margin-top:18px;
+padding:14px 16px;
+border-radius:18px;
+border:1px solid var(--line);
+background:rgba(255,255,255,.04);
+display:none;
+font-size:14px;
+}
+
+.feedback.success{
+display:block;
+border-color:rgba(121,240,207,.28);
+background:rgba(121,240,207,.08);
+color:var(--success);
+}
+
+.feedback.error{
+display:block;
+border-color:rgba(255,140,168,.28);
+background:rgba(255,140,168,.08);
+color:var(--danger);
+}
+
+@media(max-width:760px){
+.songRow{
+align-items:flex-start;
+flex-wrap:wrap;
+}
+
+.songActions{
+width:100%;
+}
+}
+</style>
+</head>
+
+<body>
+<div class="page">
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo"></div>
+    <div>
+      <strong>THIS IS MUSIC</strong><br>
+      <span style="font-size:12px;color:var(--muted)">Your listening history</span>
+    </div>
+  </div>
+
+  <div class="navActions">
+    <a class="btn" id="homeLink" href="/home">Home</a>
+    <a class="btn secondary" id="likedLink" href="/liked">Liked Songs</a>
+    <a class="btn secondary" id="historyLink" href="/history">History</a>
+    <a class="btn secondary" id="trendingLink" href="/trending">Trending</a>
+    <a class="btn secondary" id="profileLink" href="/profile">Profile</a>
+    <a class="btn primary" id="playlistLink" href="/playlists">Playlists</a>
+  </div>
+</header>
+
+<section class="section">
+  <div class="userBadge" id="userBadge">History</div>
+  <h1>Listening History</h1>
+  <p>Tracks you previewed while exploring the app.</p>
+
+  <div class="statsRow">
+    <div class="statChip" id="songCountChip">0 songs in history</div>
+    <button class="btn danger" type="button" id="clearHistoryButton">Clear History</button>
+  </div>
+
+  <div class="feedback" id="feedbackBox"></div>
+
+  <div id="historyContainer" class="results"></div>
+  <div id="emptyState" class="emptyState" style="display:none;">
+    You haven’t previewed any songs yet. Go back home or trending and play a preview to start your history.
+  </div>
+</section>
+
+</div>
+
+<script>
+const homeLink = document.getElementById("homeLink");
+const likedLink = document.getElementById("likedLink");
+const historyLink = document.getElementById("historyLink");
+const playlistLink = document.getElementById("playlistLink");
+const trendingLink = document.getElementById("trendingLink");
+const profileLink = document.getElementById("profileLink");
+const userBadge = document.getElementById("userBadge");
+const feedbackBox = document.getElementById("feedbackBox");
+const songCountChip = document.getElementById("songCountChip");
+const historyContainer = document.getElementById("historyContainer");
+const emptyState = document.getElementById("emptyState");
+const clearHistoryButton = document.getElementById("clearHistoryButton");
+
+function getCookie(name) {
+  const cookieString = document.cookie || "";
+  const cookies = cookieString.split(";");
+
+  for (const cookie of cookies) {
+    const trimmed = cookie.trim();
+    if (trimmed.startsWith(name + "=")) {
+      return decodeURIComponent(trimmed.substring(name.length + 1));
+    }
+  }
+
+  return "";
+}
+
+const username = getCookie("username");
+
+if (username) {
+  homeLink.href = `/home?username=${encodeURIComponent(username)}`;
+  likedLink.href = `/liked?username=${encodeURIComponent(username)}`;
+  historyLink.href = `/history?username=${encodeURIComponent(username)}`;
+  playlistLink.href = `/playlists?username=${encodeURIComponent(username)}`;
+  trendingLink.href = `/trending?username=${encodeURIComponent(username)}`;
+  profileLink.href = `/profile?username=${encodeURIComponent(username)}`;
+  userBadge.textContent = username;
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function showFeedback(message, type = "success") {
+  feedbackBox.className = `feedback ${type}`;
+  feedbackBox.textContent = message;
+}
+
+function getLocalHistorySongs() {
+  return JSON.parse(localStorage.getItem("recentlyPlayed") || "[]");
+}
+
+function saveLocalHistorySongs(songs) {
+  localStorage.setItem("recentlyPlayed", JSON.stringify(songs));
+}
+
+async function fetchBackendHistory() {
+  try {
+    const response = await fetch("/api/history/get", {
+      headers: {
+        "Accept": "application/json"
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch history");
+    }
+
+    const data = await response.json();
+
+    if (data.status !== "success") {
+      throw new Error(data.message || "History fetch failed");
+    }
+
+    return Array.isArray(data.songs) ? data.songs : [];
+  } catch (error) {
+    return null;
+  }
+}
+
+async function clearBackendHistory() {
+  try {
+    const response = await fetch("/api/history/clear", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify({ username })
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to clear backend history");
+    }
+
+    const data = await response.json();
+
+    if (data.status !== "success") {
+      throw new Error(data.message || "Clear history failed");
+    }
+
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+async function clearHistory() {
+  const backendWorked = await clearBackendHistory();
+
+  saveLocalHistorySongs([]);
+
+  if (backendWorked) {
+    showFeedback("Listening history cleared.", "success");
+  } else {
+    showFeedback("Backend history unavailable, cleared local history only.", "success");
+  }
+
+  await renderHistorySongs();
+}
+
+function renderHistoryList(songs) {
+  songCountChip.textContent = `${songs.length} song${songs.length === 1 ? "" : "s"} in history`;
+
+  if (!songs.length) {
+    historyContainer.innerHTML = "";
+    emptyState.style.display = "block";
+    return;
+  }
+
+  emptyState.style.display = "none";
+
+  historyContainer.innerHTML = songs.map(song => `
+    <div class="songRow">
+      <img
+        class="songArt"
+        src="${escapeHtml(song.artwork_url || "")}"
+        alt="${escapeHtml(song.track_name || "Artwork")}"
+      >
+
+      <div class="songMain">
+        <p class="songTitle">${escapeHtml(song.track_name || "Unknown Track")}</p>
+        <p class="songMeta">
+          ${escapeHtml(song.artist_name || "Unknown Artist")} • ${escapeHtml(song.album_name || "Unknown Album")}
+        </p>
+      </div>
+
+      <div class="songActions">
+        ${song.track_view_url ? `
+          <a class="btn primary" href="${escapeHtml(song.track_view_url)}" target="_blank" rel="noopener noreferrer">Open</a>
+        ` : ""}
+      </div>
+    </div>
+  `).join("");
+}
+
+async function renderHistorySongs() {
+  const backendSongs = await fetchBackendHistory();
+
+  if (backendSongs !== null) {
+    renderHistoryList(backendSongs);
+    return;
+  }
+
+  const localSongs = getLocalHistorySongs();
+  renderHistoryList(localSongs);
+}
+
+clearHistoryButton.addEventListener("click", clearHistory);
+renderHistorySongs();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Profile | THIS IS MUSIC</title>
+
+<style>
+:root{
+--ink:#07111f;
+--ink2:#0d1d34;
+--panel:rgba(10,23,42,.74);
+--panelSoft:rgba(255,255,255,.06);
+--line:rgba(188,218,255,.18);
+--blue:#2d74ff;
+--blueSoft:#7fc1ff;
+--mint:#79f0cf;
+--text:#eef5ff;
+--muted:rgba(238,245,255,.72);
+--shadow:0 24px 80px rgba(0,0,0,.42);
+--success:#79f0cf;
+--danger:#ff8ca8;
+}
+
+*{box-sizing:border-box;}
+
+body{
+margin:0;
+font-family:"Trebuchet MS","Avenir Next",sans-serif;
+color:var(--text);
+background:
+radial-gradient(900px 520px at 12% 12%, rgba(127,193,255,.18), transparent 58%),
+radial-gradient(900px 520px at 88% 20%, rgba(121,240,207,.12), transparent 60%),
+linear-gradient(180deg,var(--ink),var(--ink2));
+min-height:100vh;
+padding:28px;
+}
+
+.page{
+max-width:1180px;
+margin:auto;
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:14px 18px;
+border-radius:22px;
+background:rgba(255,255,255,.04);
+border:1px solid var(--line);
+box-shadow:var(--shadow);
+margin-bottom:24px;
+gap:16px;
+flex-wrap:wrap;
+}
+
+.brand{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.logo{
+width:42px;
+height:42px;
+border-radius:14px;
+background:
+linear-gradient(145deg,var(--mint),transparent 35%),
+linear-gradient(135deg,var(--blue),var(--blueSoft));
+}
+
+.navActions{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.btn{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+padding:10px 16px;
+border-radius:999px;
+border:1px solid var(--line);
+background:rgba(255,255,255,.06);
+color:var(--text);
+text-decoration:none;
+font-weight:700;
+cursor:pointer;
+transition:transform .18s ease, background .18s ease, border-color .18s ease;
+white-space:nowrap;
+}
+
+.btn:hover{
+transform:translateY(-1px);
+background:rgba(255,255,255,.12);
+}
+
+.btn.primary{
+background:linear-gradient(135deg,var(--blue),var(--blueSoft));
+border:none;
+}
+
+.btn.secondary{
+background:rgba(255,255,255,.06);
+border:1px solid var(--line);
+}
+
+.btn.danger{
+border-color:rgba(255,140,168,.28);
+background:rgba(255,140,168,.10);
+color:var(--danger);
+}
+
+.layout{
+display:grid;
+grid-template-columns:1.05fr .95fr;
+gap:24px;
+}
+
+.section{
+border-radius:30px;
+border:1px solid var(--line);
+background:var(--panel);
+padding:32px;
+box-shadow:var(--shadow);
+}
+
+.userBadge{
+display:inline-flex;
+align-items:center;
+gap:8px;
+padding:8px 12px;
+border-radius:999px;
+background:rgba(255,255,255,.05);
+border:1px solid var(--line);
+font-size:12px;
+letter-spacing:.08em;
+text-transform:uppercase;
+color:var(--muted);
+margin-bottom:14px;
+}
+
+.section h1{
+font-family:Georgia,"Times New Roman",serif;
+font-size:42px;
+margin:0 0 12px;
+}
+
+.section p{
+margin:0;
+color:var(--muted);
+line-height:1.7;
+}
+
+.formGrid{
+display:grid;
+gap:16px;
+margin-top:24px;
+}
+
+.field{
+display:grid;
+gap:8px;
+}
+
+label{
+font-size:14px;
+font-weight:700;
+color:var(--text);
+}
+
+input,
+textarea,
+select{
+width:100%;
+padding:14px 16px;
+border-radius:16px;
+border:1px solid var(--line);
+background:rgba(0,0,0,.22);
+color:var(--text);
+font-size:15px;
+outline:none;
+font-family:inherit;
+}
+
+textarea{
+min-height:120px;
+resize:vertical;
+}
+
+input::placeholder,
+textarea::placeholder{
+color:rgba(238,245,255,.42);
+}
+
+.actionRow{
+display:flex;
+gap:12px;
+flex-wrap:wrap;
+margin-top:22px;
+}
+
+.feedback{
+margin-top:18px;
+padding:14px 16px;
+border-radius:18px;
+border:1px solid var(--line);
+background:rgba(255,255,255,.04);
+display:none;
+font-size:14px;
+}
+
+.feedback.success{
+display:block;
+border-color:rgba(121,240,207,.28);
+background:rgba(121,240,207,.08);
+color:var(--success);
+}
+
+.feedback.error{
+display:block;
+border-color:rgba(255,140,168,.28);
+background:rgba(255,140,168,.08);
+color:var(--danger);
+}
+
+.previewCard{
+display:grid;
+gap:18px;
+}
+
+.profileHero{
+display:flex;
+gap:18px;
+align-items:center;
+padding:20px;
+border-radius:24px;
+background:rgba(255,255,255,.05);
+border:1px solid var(--line);
+}
+
+.avatar{
+width:88px;
+height:88px;
+border-radius:24px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:30px;
+font-weight:800;
+color:#07111f;
+background:var(--blueSoft);
+flex-shrink:0;
+}
+
+.previewName{
+font-size:28px;
+font-weight:800;
+margin:0 0 6px;
+}
+
+.previewMeta{
+margin:0;
+color:var(--muted);
+font-size:14px;
+line-height:1.7;
+}
+
+.previewBlock{
+padding:20px;
+border-radius:24px;
+background:rgba(255,255,255,.05);
+border:1px solid var(--line);
+}
+
+.previewBlock h3{
+margin:0 0 10px;
+font-size:18px;
+}
+
+.previewBlock p{
+margin:0;
+color:var(--muted);
+line-height:1.8;
+}
+
+.colorRow{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-top:10px;
+}
+
+.colorSwatch{
+width:34px;
+height:34px;
+border-radius:12px;
+border:2px solid rgba(255,255,255,.18);
+}
+
+.helper{
+font-size:13px;
+color:var(--muted);
+}
+
+@media(max-width:960px){
+.layout{
+grid-template-columns:1fr;
+}
+}
+</style>
+</head>
+
+<body>
+<div class="page">
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo"></div>
+    <div>
+      <strong>THIS IS MUSIC</strong><br>
+      <span style="font-size:12px;color:var(--muted)">Customize your profile</span>
+    </div>
+  </div>
+
+  <div class="navActions">
+    <a class="btn" id="homeLink" href="/home">Home</a>
+    <a class="btn secondary" id="likedLink" href="/liked">Liked Songs</a>
+    <a class="btn secondary" id="historyLink" href="/history">History</a>
+    <a class="btn secondary" id="trendingLink" href="/trending">Trending</a>
+    <a class="btn secondary" id="playlistLink" href="/playlists">Playlists</a>
+    <a class="btn primary" id="profileLink" href="/profile">Profile</a>
+  </div>
+</header>
+
+<div class="layout">
+  <section class="section">
+    <div class="userBadge" id="userBadge">Profile</div>
+    <h1>Account Customization</h1>
+    <p>Give your account a little personality without turning it into a glitter explosion.</p>
+
+    <div class="formGrid">
+      <div class="field">
+        <label for="displayNameInput">Display Name</label>
+        <input id="displayNameInput" type="text" placeholder="How you want your name to appear">
+      </div>
+
+      <div class="field">
+        <label for="bioInput">Bio</label>
+        <textarea id="bioInput" placeholder="Say something about your music taste..."></textarea>
+      </div>
+
+      <div class="field">
+        <label for="genreInput">Favorite Genre</label>
+        <input id="genreInput" type="text" placeholder="Anime openings, hip-hop, R&B...">
+      </div>
+
+      <div class="field">
+        <label for="artistInput">Favorite Artist</label>
+        <input id="artistInput" type="text" placeholder="The artist always in rotation">
+      </div>
+
+      <div class="field">
+        <label for="accentInput">Accent Color</label>
+        <select id="accentInput">
+          <option value="#7fc1ff">Sky Blue</option>
+          <option value="#79f0cf">Mint</option>
+          <option value="#ffd588">Gold</option>
+          <option value="#ff8ca8">Rose</option>
+          <option value="#c7a6ff">Lavender</option>
+        </select>
+        <div class="helper">This changes your avatar card color in the profile preview.</div>
+      </div>
+    </div>
+
+    <div class="actionRow">
+      <button class="btn primary" id="saveProfileButton" type="button">Save Profile</button>
+      <button class="btn danger" id="resetProfileButton" type="button">Reset</button>
+    </div>
+
+    <div class="feedback" id="feedbackBox"></div>
+  </section>
+
+  <section class="section previewCard">
+    <div class="profileHero">
+      <div class="avatar" id="avatarPreview">U</div>
+      <div>
+        <p class="previewName" id="namePreview">User</p>
+        <p class="previewMeta" id="metaPreview">Favorite genre and artist will appear here.</p>
+      </div>
+    </div>
+
+    <div class="previewBlock">
+      <h3>Bio</h3>
+      <p id="bioPreview">Your bio preview will show up here once you add one.</p>
+    </div>
+
+    <div class="previewBlock">
+      <h3>Accent Preview</h3>
+      <div class="colorRow">
+        <div class="colorSwatch" id="swatchPreview"></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+</div>
+
+<script>
+const homeLink = document.getElementById("homeLink");
+const likedLink = document.getElementById("likedLink");
+const historyLink = document.getElementById("historyLink");
+const trendingLink = document.getElementById("trendingLink");
+const playlistLink = document.getElementById("playlistLink");
+const profileLink = document.getElementById("profileLink");
+const userBadge = document.getElementById("userBadge");
+
+const displayNameInput = document.getElementById("displayNameInput");
+const bioInput = document.getElementById("bioInput");
+const genreInput = document.getElementById("genreInput");
+const artistInput = document.getElementById("artistInput");
+const accentInput = document.getElementById("accentInput");
+
+const saveProfileButton = document.getElementById("saveProfileButton");
+const resetProfileButton = document.getElementById("resetProfileButton");
+const feedbackBox = document.getElementById("feedbackBox");
+
+const avatarPreview = document.getElementById("avatarPreview");
+const namePreview = document.getElementById("namePreview");
+const metaPreview = document.getElementById("metaPreview");
+const bioPreview = document.getElementById("bioPreview");
+const swatchPreview = document.getElementById("swatchPreview");
+
+function getCookie(name) {
+  const cookieString = document.cookie || "";
+  const cookies = cookieString.split(";");
+
+  for (const cookie of cookies) {
+    const trimmed = cookie.trim();
+    if (trimmed.startsWith(name + "=")) {
+      return decodeURIComponent(trimmed.substring(name.length + 1));
+    }
+  }
+
+  return "";
+}
+
+const username = getCookie("username") || "User";
+
+homeLink.href = `/home?username=${encodeURIComponent(username)}`;
+likedLink.href = `/liked?username=${encodeURIComponent(username)}`;
+historyLink.href = `/history?username=${encodeURIComponent(username)}`;
+trendingLink.href = `/trending?username=${encodeURIComponent(username)}`;
+playlistLink.href = `/playlists?username=${encodeURIComponent(username)}`;
+profileLink.href = `/profile?username=${encodeURIComponent(username)}`;
+userBadge.textContent = username;
+
+function profileStorageKey() {
+  return `profileSettings::${username}`;
+}
+
+function defaultProfile() {
+  return {
+    display_name: username,
+    bio: "",
+    favorite_genre: "",
+    favorite_artist: "",
+    accent_color: "#7fc1ff"
+  };
+}
+
+function getSavedProfile() {
+  try {
+    const raw = localStorage.getItem(profileStorageKey());
+    if (!raw) return defaultProfile();
+
+    const parsed = JSON.parse(raw);
+    return {
+      display_name: parsed.display_name || username,
+      bio: parsed.bio || "",
+      favorite_genre: parsed.favorite_genre || "",
+      favorite_artist: parsed.favorite_artist || "",
+      accent_color: parsed.accent_color || "#7fc1ff"
+    };
+  } catch (error) {
+    return defaultProfile();
+  }
+}
+
+function saveProfile(profile) {
+  localStorage.setItem(profileStorageKey(), JSON.stringify(profile));
+}
+
+function showFeedback(message, type = "success") {
+  feedbackBox.className = `feedback ${type}`;
+  feedbackBox.textContent = message;
+}
+
+function initialsFromName(name) {
+  const cleaned = String(name || "").trim();
+  if (!cleaned) return "U";
+
+  const parts = cleaned.split(/\s+/).slice(0, 2);
+  return parts.map(part => part[0].toUpperCase()).join("");
+}
+
+function currentProfileFromInputs() {
+  return {
+    display_name: displayNameInput.value.trim() || username,
+    bio: bioInput.value.trim(),
+    favorite_genre: genreInput.value.trim(),
+    favorite_artist: artistInput.value.trim(),
+    accent_color: accentInput.value || "#7fc1ff"
+  };
+}
+
+function renderPreview(profile) {
+  avatarPreview.textContent = initialsFromName(profile.display_name);
+  avatarPreview.style.background = profile.accent_color;
+  swatchPreview.style.background = profile.accent_color;
+
+  namePreview.textContent = profile.display_name || username;
+
+  const genre = profile.favorite_genre || "No genre picked yet";
+  const artist = profile.favorite_artist || "No favorite artist yet";
+  metaPreview.textContent = `${genre} • ${artist}`;
+
+  bioPreview.textContent = profile.bio || "Your bio preview will show up here once you add one.";
+}
+
+function loadProfileIntoInputs(profile) {
+  displayNameInput.value = profile.display_name || username;
+  bioInput.value = profile.bio || "";
+  genreInput.value = profile.favorite_genre || "";
+  artistInput.value = profile.favorite_artist || "";
+  accentInput.value = profile.accent_color || "#7fc1ff";
+}
+
+function handleSaveProfile() {
+  const profile = currentProfileFromInputs();
+  saveProfile(profile);
+  renderPreview(profile);
+  showFeedback("Profile saved successfully.", "success");
+}
+
+function handleResetProfile() {
+  const profile = defaultProfile();
+  saveProfile(profile);
+  loadProfileIntoInputs(profile);
+  renderPreview(profile);
+  showFeedback("Profile reset to default.", "success");
+}
+
+[displayNameInput, bioInput, genreInput, artistInput, accentInput].forEach(input => {
+  input.addEventListener("input", () => {
+    renderPreview(currentProfileFromInputs());
+  });
+});
+
+saveProfileButton.addEventListener("click", handleSaveProfile);
+resetProfileButton.addEventListener("click", handleResetProfile);
+
+const startingProfile = getSavedProfile();
+loadProfileIntoInputs(startingProfile);
+renderPreview(startingProfile);
+</script>
+
+</body>
+</html>

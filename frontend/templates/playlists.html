@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Playlists | THIS IS MUSIC</title>
+
+<style>
+:root{
+--ink:#07111f;
+--ink2:#0d1d34;
+--panel:rgba(10,23,42,.74);
+--panelSoft:rgba(255,255,255,.06);
+--line:rgba(188,218,255,.18);
+--blue:#2d74ff;
+--blueSoft:#7fc1ff;
+--mint:#79f0cf;
+--text:#eef5ff;
+--muted:rgba(238,245,255,.72);
+--shadow:0 24px 80px rgba(0,0,0,.42);
+--danger:#ff8ca8;
+--success:#79f0cf;
+}
+
+*{box-sizing:border-box;}
+
+body{
+margin:0;
+font-family:"Trebuchet MS","Avenir Next",sans-serif;
+color:var(--text);
+background:
+radial-gradient(900px 520px at 12% 12%, rgba(127,193,255,.18), transparent 58%),
+radial-gradient(900px 520px at 88% 20%, rgba(121,240,207,.12), transparent 60%),
+linear-gradient(180deg,var(--ink),var(--ink2));
+min-height:100vh;
+padding:28px;
+}
+
+.page{
+max-width:1180px;
+margin:auto;
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:14px 18px;
+border-radius:22px;
+background:rgba(255,255,255,.04);
+border:1px solid var(--line);
+box-shadow:var(--shadow);
+margin-bottom:24px;
+gap:16px;
+flex-wrap:wrap;
+}
+
+.brand{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.logo{
+width:42px;
+height:42px;
+border-radius:14px;
+background:
+linear-gradient(145deg,var(--mint),transparent 35%),
+linear-gradient(135deg,var(--blue),var(--blueSoft));
+}
+
+.navActions{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.btn{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+padding:10px 16px;
+border-radius:999px;
+border:1px solid var(--line);
+background:rgba(255,255,255,.06);
+color:var(--text);
+text-decoration:none;
+font-weight:700;
+cursor:pointer;
+transition:transform .18s ease, background .18s ease, border-color .18s ease;
+}
+
+.btn:hover{
+transform:translateY(-1px);
+background:rgba(255,255,255,.12);
+}
+
+.btn.primary{
+background:linear-gradient(135deg,var(--blue),var(--blueSoft));
+border:none;
+}
+
+.btn.secondary{
+background:rgba(255,255,255,.06);
+border:1px solid var(--line);
+}
+
+.btn.danger{
+border-color:rgba(255,140,168,.28);
+background:rgba(255,140,168,.10);
+color:var(--danger);
+}
+
+.section{
+border-radius:30px;
+border:1px solid var(--line);
+background:var(--panel);
+padding:32px;
+box-shadow:var(--shadow);
+margin-bottom:24px;
+}
+
+.section h1{
+font-family:Georgia,"Times New Roman",serif;
+font-size:42px;
+margin:0 0 10px;
+}
+
+.section p{
+margin:0;
+color:var(--muted);
+line-height:1.7;
+}
+
+.userBadge{
+display:inline-flex;
+align-items:center;
+gap:8px;
+padding:8px 12px;
+border-radius:999px;
+background:rgba(255,255,255,.05);
+border:1px solid var(--line);
+font-size:12px;
+letter-spacing:.08em;
+text-transform:uppercase;
+color:var(--muted);
+margin-bottom:14px;
+}
+
+.createRow{
+display:flex;
+gap:10px;
+margin-top:20px;
+flex-wrap:wrap;
+}
+
+.createRow input{
+flex:1;
+min-width:220px;
+padding:14px;
+border-radius:14px;
+border:1px solid var(--line);
+background:rgba(0,0,0,.25);
+color:var(--text);
+font-size:15px;
+outline:none;
+}
+
+.createRow input::placeholder{
+color:rgba(238,245,255,.44);
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:16px;
+margin-top:24px;
+}
+
+.playlistCard{
+padding:20px;
+border-radius:22px;
+background:var(--panelSoft);
+border:1px solid var(--line);
+display:flex;
+flex-direction:column;
+gap:12px;
+min-height:190px;
+}
+
+.playlistTop{
+display:flex;
+align-items:flex-start;
+justify-content:space-between;
+gap:12px;
+}
+
+.playlistIcon{
+width:52px;
+height:52px;
+border-radius:16px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:24px;
+background:
+linear-gradient(145deg, rgba(127,193,255,.18), rgba(121,240,207,.10)),
+rgba(255,255,255,.05);
+border:1px solid var(--line);
+flex-shrink:0;
+}
+
+.playlistCard h3{
+margin:0;
+font-size:20px;
+line-height:1.25;
+word-break:break-word;
+}
+
+.meta{
+color:var(--muted);
+font-size:14px;
+}
+
+.playlistSummary{
+color:var(--muted);
+font-size:14px;
+line-height:1.6;
+min-height:44px;
+}
+
+.cardActions{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-top:auto;
+}
+
+.emptyState{
+margin-top:24px;
+padding:24px;
+border-radius:20px;
+border:1px dashed var(--line);
+background:rgba(255,255,255,.03);
+color:var(--muted);
+text-align:center;
+line-height:1.7;
+}
+
+.feedback{
+margin-top:18px;
+padding:14px 16px;
+border-radius:18px;
+border:1px solid var(--line);
+background:rgba(255,255,255,.04);
+display:none;
+font-size:14px;
+}
+
+.feedback.success{
+display:block;
+border-color:rgba(121,240,207,.28);
+background:rgba(121,240,207,.08);
+color:var(--success);
+}
+
+.feedback.error{
+display:block;
+border-color:rgba(255,140,168,.28);
+background:rgba(255,140,168,.08);
+color:var(--danger);
+}
+
+@media(max-width:950px){
+.grid{
+grid-template-columns:repeat(2,1fr);
+}
+}
+
+@media(max-width:700px){
+.grid{
+grid-template-columns:1fr;
+}
+}
+</style>
+</head>
+
+<body>
+<div class="page">
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo"></div>
+    <div>
+      <strong>THIS IS MUSIC</strong><br>
+      <span style="font-size:12px;color:var(--muted)">Your playlists</span>
+    </div>
+  </div>
+
+  <div class="navActions">
+    <a class="btn" id="homeLink" href="/home">Home</a>
+    <a class="btn secondary" id="likedLink" href="/liked">Liked Songs</a>
+    <a class="btn primary" id="playlistLink" href="/playlists">Playlists</a>
+  </div>
+</header>
+
+<section class="section">
+  <div class="userBadge" id="userBadge">Playlists</div>
+  <h1>Playlists</h1>
+  <p>Create and manage your music collections.</p>
+
+  <div class="createRow">
+    <input type="text" id="playlistInput" placeholder="Enter playlist name...">
+    <button class="btn primary" type="button" onclick="createPlaylist()">Create</button>
+  </div>
+
+  <div class="feedback" id="feedbackBox"></div>
+
+  <div id="playlistGrid" class="grid"></div>
+  <div id="emptyState" class="emptyState" style="display:none;">
+    No playlists yet. Create your first one above.
+  </div>
+</section>
+
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const username = params.get("username");
+
+const homeLink = document.getElementById("homeLink");
+const likedLink = document.getElementById("likedLink");
+const playlistLink = document.getElementById("playlistLink");
+const userBadge = document.getElementById("userBadge");
+const feedbackBox = document.getElementById("feedbackBox");
+const playlistInput = document.getElementById("playlistInput");
+
+if (username) {
+  homeLink.href = `/home?username=${encodeURIComponent(username)}`;
+  likedLink.href = `/liked?username=${encodeURIComponent(username)}`;
+  playlistLink.href = `/playlists?username=${encodeURIComponent(username)}`;
+  userBadge.textContent = username;
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function showFeedback(message, type = "success") {
+  feedbackBox.className = `feedback ${type}`;
+  feedbackBox.textContent = message;
+}
+
+function getPlaylists() {
+  return JSON.parse(localStorage.getItem("playlists") || "[]");
+}
+
+function savePlaylists(playlists) {
+  localStorage.setItem("playlists", JSON.stringify(playlists));
+}
+
+function createPlaylist() {
+  const name = playlistInput.value.trim();
+
+  if (!name) {
+    showFeedback("Enter a playlist name first.", "error");
+    return;
+  }
+
+  let playlists = getPlaylists();
+
+  const alreadyExists = playlists.some(
+    playlist => playlist.name.trim().toLowerCase() === name.toLowerCase()
+  );
+
+  if (alreadyExists) {
+    showFeedback("A playlist with that name already exists.", "error");
+    return;
+  }
+
+  const newPlaylist = {
+    id: Date.now(),
+    name,
+    songs: []
+  };
+
+  playlists.unshift(newPlaylist);
+  savePlaylists(playlists);
+
+  playlistInput.value = "";
+  showFeedback(`Created "${name}" successfully.`);
+  renderPlaylists();
+}
+
+function deletePlaylist(id) {
+  const playlists = getPlaylists();
+  const target = playlists.find(p => String(p.id) === String(id));
+
+  if (!target) {
+    showFeedback("Playlist not found.", "error");
+    return;
+  }
+
+  const confirmed = confirm(`Delete playlist "${target.name}"?`);
+  if (!confirmed) return;
+
+  const updated = playlists.filter(p => String(p.id) !== String(id));
+  savePlaylists(updated);
+  showFeedback(`Deleted "${target.name}".`);
+  renderPlaylists();
+}
+
+function getPlaylistSummary(playlist) {
+  if (!playlist.songs.length) {
+    return "No songs yet. Start adding tracks from Home or Liked Songs.";
+  }
+
+  const previewNames = playlist.songs.slice(0, 2).map(song => song.track_name).filter(Boolean);
+
+  if (!previewNames.length) {
+    return `${playlist.songs.length} saved song${playlist.songs.length === 1 ? "" : "s"}.`;
+  }
+
+  return `${previewNames.join(" • ")}${playlist.songs.length > 2 ? " • ..." : ""}`;
+}
+
+function renderPlaylists() {
+  const playlists = getPlaylists();
+  const grid = document.getElementById("playlistGrid");
+  const emptyState = document.getElementById("emptyState");
+
+  if (!playlists.length) {
+    grid.innerHTML = "";
+    emptyState.style.display = "block";
+    return;
+  }
+
+  emptyState.style.display = "none";
+
+  grid.innerHTML = playlists.map(playlist => `
+    <div class="playlistCard">
+      <div class="playlistTop">
+        <div>
+          <h3>${escapeHtml(playlist.name)}</h3>
+          <div class="meta">${playlist.songs.length} song${playlist.songs.length === 1 ? "" : "s"}</div>
+        </div>
+        <div class="playlistIcon">🎵</div>
+      </div>
+
+      <div class="playlistSummary">${escapeHtml(getPlaylistSummary(playlist))}</div>
+
+      <div class="cardActions">
+        <a class="btn primary" href="/playlist?id=${playlist.id}${username ? `&username=${encodeURIComponent(username)}` : ""}">Open</a>
+        <button class="btn danger" type="button" onclick="deletePlaylist('${playlist.id}')">Delete</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+playlistInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    createPlaylist();
+  }
+});
+
+renderPlaylists();
+</script>
+
+</body>
+</html>
