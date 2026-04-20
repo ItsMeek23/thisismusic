@@ -23,7 +23,8 @@ from history_producer import (
 )
 from discussion_producer import (
     send_create_discussion_post,
-    send_get_discussion_posts
+    send_get_discussion_posts,
+    send_create_discussion_reply
 )
 from fe_response_consumer import wait_for_response
 
@@ -46,6 +47,7 @@ HISTORY_CLEAR_RESPONSE_QUEUE = "history.clear.bedb_to_fe"
 
 DISCUSSION_CREATE_POST_RESPONSE_QUEUE = "discussion.create_post.bedb_to_fe"
 DISCUSSION_GET_POSTS_RESPONSE_QUEUE = "discussion.get_posts.bedb_to_fe"
+DISCUSSION_CREATE_REPLY_RESPONSE_QUEUE = "discussion.create_reply.bedb_to_fe"
 
 
 def read_file(path):
@@ -200,10 +202,29 @@ class Handler(BaseHTTPRequestHandler):
 
         rendered = []
         for post in posts:
+            post_id = post.get("id")
             title = html.escape(str(post.get("title", "")))
             body = html.escape(str(post.get("body", "")))
             username = html.escape(str(post.get("username", "Unknown")))
             created_at = html.escape(str(post.get("created_at", "")))
+            replies = post.get("replies", []) or []
+
+            if replies:
+                reply_parts = []
+                for reply in replies:
+                    reply_username = html.escape(str(reply.get("username", "Unknown")))
+                    reply_body = html.escape(str(reply.get("body", ""))).replace("\n", "<br>")
+                    reply_created_at = html.escape(str(reply.get("created_at", "")))
+
+                    reply_parts.append(f"""
+                    <div class="reply-card">
+                        <p class="reply-meta">{reply_username} replied on {reply_created_at}</p>
+                        <p class="reply-body">{reply_body}</p>
+                    </div>
+                    """)
+                replies_html = "\n".join(reply_parts)
+            else:
+                replies_html = '<p class="no-replies">No replies yet.</p>'
 
             rendered.append(f"""
             <div class="post-card">
@@ -211,8 +232,20 @@ class Handler(BaseHTTPRequestHandler):
                     <h3>{title}</h3>
                     <p class="meta">Posted by {username} on {created_at}</p>
                 </div>
+
                 <div class="post-body">
                     <p>{body.replace(chr(10), "<br>")}</p>
+                </div>
+
+                <div class="reply-section">
+                    <h4>Replies</h4>
+                    {replies_html}
+
+                    <form method="POST" action="/discussion/reply" class="reply-form">
+                        <input type="hidden" name="post_id" value="{post_id}">
+                        <textarea name="body" placeholder="Write a reply..." required></textarea>
+                        <button type="submit">Reply</button>
+                    </form>
                 </div>
             </div>
             """)
@@ -310,6 +343,43 @@ class Handler(BaseHTTPRequestHandler):
                         color: #cbd5e1;
                         text-align: center;
                         padding: 20px 0;
+                    }}
+                    .reply-section {{
+                        margin-top: 20px;
+                        padding-top: 16px;
+                        border-top: 1px solid rgba(148, 163, 184, 0.25);
+                    }}
+                    .reply-section h4 {{
+                        margin: 0 0 14px 0;
+                        color: #38bdf8;
+                    }}
+                    .reply-card {{
+                        background: rgba(30, 41, 59, 0.75);
+                        border-left: 4px solid #38bdf8;
+                        padding: 12px 14px;
+                        border-radius: 8px;
+                        margin-bottom: 12px;
+                    }}
+                    .reply-meta {{
+                        font-size: 12px;
+                        color: #94a3b8;
+                        margin: 0 0 8px 0;
+                    }}
+                    .reply-body {{
+                        margin: 0;
+                        color: #e2e8f0;
+                        line-height: 1.5;
+                        white-space: pre-wrap;
+                    }}
+                    .reply-form {{
+                        margin-top: 14px;
+                    }}
+                    .reply-form textarea {{
+                        min-height: 80px;
+                    }}
+                    .no-replies {{
+                        color: #94a3b8;
+                        font-size: 14px;
                     }}
                     a {{
                         color: #38bdf8;
@@ -811,6 +881,44 @@ class Handler(BaseHTTPRequestHandler):
                 message="Discussion post service unavailable. Please make sure RabbitMQ and backend services are running."
             )
 
+    def handle_create_discussion_reply(self):
+        username = self.get_logged_in_username()
+        user_id = self.get_logged_in_user_id()
+
+        if not username:
+            self.send_redirect("/login")
+            return
+
+        body = self.parse_request_body()
+        post_id = str(body.get("post_id", "")).strip()
+        reply_body = str(body.get("body", "")).strip()
+
+        if not post_id or not reply_body:
+            self.render_discussion_page(message="Post ID and reply body are required.")
+            return
+
+        try:
+            correlation_id = send_create_discussion_reply(
+                post_id=post_id,
+                user_id=user_id,
+                username=username,
+                body=reply_body
+            )
+            response = wait_for_response(DISCUSSION_CREATE_REPLY_RESPONSE_QUEUE, correlation_id)
+
+            if isinstance(response, dict):
+                message = response.get("message", "Reply submitted.")
+            else:
+                message = "Reply submitted."
+
+            self.render_discussion_page(message=message)
+
+        except Exception as e:
+            print("CREATE DISCUSSION REPLY ERROR:", e)
+            self.render_discussion_page(
+                message="Discussion reply service unavailable. Please make sure RabbitMQ and backend services are running."
+            )
+
     def do_GET(self):
         self.route(send_body=True)
 
@@ -851,6 +959,10 @@ class Handler(BaseHTTPRequestHandler):
 
         if path == "/discussion/create":
             self.handle_create_discussion_post()
+            return
+
+        if path == "/discussion/reply":
+            self.handle_create_discussion_reply()
             return
 
         self.send_json({"status": "fail", "message": "Not Found"}, status=404)
