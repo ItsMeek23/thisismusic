@@ -5,6 +5,7 @@ import os
 import mimetypes
 import json
 import re
+import html
 
 from fe_producer import (
     send_register,
@@ -19,6 +20,10 @@ from history_producer import (
     send_add_history,
     send_get_history,
     send_clear_history
+)
+from discussion_producer import (
+    send_create_discussion_post,
+    send_get_discussion_posts
 )
 from fe_response_consumer import wait_for_response
 
@@ -38,6 +43,9 @@ LIKES_REMOVE_RESPONSE_QUEUE = "likes.remove.bedb_to_fe"
 HISTORY_ADD_RESPONSE_QUEUE = "history.add.bedb_to_fe"
 HISTORY_GET_RESPONSE_QUEUE = "history.get.bedb_to_fe"
 HISTORY_CLEAR_RESPONSE_QUEUE = "history.clear.bedb_to_fe"
+
+DISCUSSION_CREATE_POST_RESPONSE_QUEUE = "discussion.create_post.bedb_to_fe"
+DISCUSSION_GET_POSTS_RESPONSE_QUEUE = "discussion.get_posts.bedb_to_fe"
 
 
 def read_file(path):
@@ -75,6 +83,9 @@ class Handler(BaseHTTPRequestHandler):
 
     def get_logged_in_username(self):
         return self.get_cookie_value("username")
+
+    def get_logged_in_user_id(self):
+        return self.get_cookie_value("user_id")
 
     def is_json_request(self):
         content_type = self.headers.get("Content-Type", "")
@@ -141,8 +152,8 @@ class Handler(BaseHTTPRequestHandler):
 
         return self.serve_file(full_path, content_type=None, send_body=send_body)
 
-    def send_html(self, html, status=200):
-        data = html.encode("utf-8")
+    def send_html(self, html_content, status=200):
+        data = html_content.encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "text/html; charset=utf-8")
         self.send_header("Content-Length", str(len(data)))
@@ -182,6 +193,164 @@ class Handler(BaseHTTPRequestHandler):
             return {k: v[0] if isinstance(v, list) and v else "" for k, v in parsed.items()}
 
         return {}
+
+    def render_discussion_posts_html(self, posts):
+        if not posts:
+            return '<p class="empty">No posts yet. Be the first to start the conversation.</p>'
+
+        rendered = []
+        for post in posts:
+            title = html.escape(str(post.get("title", "")))
+            body = html.escape(str(post.get("body", "")))
+            username = html.escape(str(post.get("username", "Unknown")))
+            created_at = html.escape(str(post.get("created_at", "")))
+
+            rendered.append(f"""
+            <div class="post-card">
+                <div class="post-header">
+                    <h3>{title}</h3>
+                    <p class="meta">Posted by {username} on {created_at}</p>
+                </div>
+                <div class="post-body">
+                    <p>{body.replace(chr(10), "<br>")}</p>
+                </div>
+            </div>
+            """)
+
+        return "\n".join(rendered)
+
+    def render_discussion_page(self, message=""):
+        username = self.get_logged_in_username()
+        if not username:
+            self.send_redirect("/login")
+            return
+
+        try:
+            correlation_id = send_get_discussion_posts()
+            response = wait_for_response(DISCUSSION_GET_POSTS_RESPONSE_QUEUE, correlation_id)
+        except Exception as e:
+            print("GET DISCUSSION POSTS ERROR:", e)
+            response = {
+                "status": "fail",
+                "posts": [],
+                "message": "Discussion service unavailable. Please make sure RabbitMQ and backend services are running."
+            }
+
+        posts = []
+        if isinstance(response, dict):
+            posts = response.get("posts", []) or []
+
+        template_path = os.path.join(TEMPLATES_DIR, "discussion.html")
+        if not os.path.exists(template_path):
+            fallback_html = f"""
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Discussion Board</title>
+                <style>
+                    body {{
+                        margin: 0;
+                        font-family: Arial, sans-serif;
+                        background: linear-gradient(135deg, #0f172a, #1e293b);
+                        color: white;
+                    }}
+                    .container {{
+                        max-width: 900px;
+                        margin: 40px auto;
+                        padding: 20px;
+                    }}
+                    .form-card, .feed-card {{
+                        background: rgba(30, 41, 59, 0.92);
+                        border-radius: 14px;
+                        padding: 24px;
+                        margin-bottom: 24px;
+                    }}
+                    input[type="text"], textarea {{
+                        width: 100%;
+                        padding: 12px;
+                        margin-top: 10px;
+                        margin-bottom: 16px;
+                        border-radius: 8px;
+                        border: none;
+                        font-size: 15px;
+                        box-sizing: border-box;
+                    }}
+                    textarea {{
+                        resize: vertical;
+                        min-height: 120px;
+                    }}
+                    button {{
+                        background: #38bdf8;
+                        color: #0f172a;
+                        border: none;
+                        padding: 12px 20px;
+                        border-radius: 8px;
+                        font-weight: bold;
+                        cursor: pointer;
+                    }}
+                    .post-card {{
+                        background: rgba(51, 65, 85, 0.95);
+                        padding: 18px;
+                        border-radius: 12px;
+                        margin-bottom: 18px;
+                    }}
+                    .meta {{
+                        font-size: 13px;
+                        color: #94a3b8;
+                        margin-bottom: 14px;
+                    }}
+                    .message {{
+                        margin-bottom: 16px;
+                        color: #facc15;
+                        font-weight: bold;
+                    }}
+                    .empty {{
+                        color: #cbd5e1;
+                        text-align: center;
+                        padding: 20px 0;
+                    }}
+                    a {{
+                        color: #38bdf8;
+                    }}
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <p><a href="/home">← Back to Home</a></p>
+                    <h1>Discussion Board</h1>
+                    <p>Welcome, <strong>{html.escape(username)}</strong></p>
+
+                    <div class="form-card">
+                        <h2>Create a Post</h2>
+                        <div class="message">{html.escape(message)}</div>
+                        <form method="POST" action="/discussion/create">
+                            <input type="text" name="title" placeholder="Post title" maxlength="255" required>
+                            <textarea name="body" placeholder="Write your post here..." required></textarea>
+                            <button type="submit">Post to Board</button>
+                        </form>
+                    </div>
+
+                    <div class="feed-card">
+                        <h2>Discussion Feed</h2>
+                        {self.render_discussion_posts_html(posts)}
+                    </div>
+                </div>
+            </body>
+            </html>
+            """
+            self.send_html(fallback_html)
+            return
+
+        with open(template_path, "r", encoding="utf-8") as f:
+            page = f.read()
+
+        page = page.replace("{{username}}", html.escape(username))
+        page = page.replace("{{message}}", html.escape(message))
+        page = page.replace("{{posts}}", self.render_discussion_posts_html(posts))
+
+        self.send_html(page)
 
     def handle_register(self):
         body = self.parse_request_body()
@@ -239,12 +408,19 @@ class Handler(BaseHTTPRequestHandler):
 
             if isinstance(response, dict) and response.get("status") == "success":
                 response_username = str(response.get("username", username)).strip() or username
-                cookie = f"username={response_username}; Path=/; HttpOnly; SameSite=Lax"
+                response_user_id = str(response.get("user_id", "")).strip()
+
+                cookies = [
+                    f"username={response_username}; Path=/; HttpOnly; SameSite=Lax"
+                ]
+
+                if response_user_id:
+                    cookies.append(f"user_id={response_user_id}; Path=/; HttpOnly; SameSite=Lax")
 
                 if self.is_json_request():
-                    self.send_json(response, status=200, cookies=[cookie])
+                    self.send_json(response, status=200, cookies=cookies)
                 else:
-                    self.send_redirect("/home", cookies=[cookie])
+                    self.send_redirect("/home", cookies=cookies)
                 return
 
             self.send_json(response, status=200)
@@ -597,6 +773,44 @@ class Handler(BaseHTTPRequestHandler):
                 status=503
             )
 
+    def handle_create_discussion_post(self):
+        username = self.get_logged_in_username()
+        user_id = self.get_logged_in_user_id()
+
+        if not username:
+            self.send_redirect("/login")
+            return
+
+        body = self.parse_request_body()
+        title = str(body.get("title", "")).strip()
+        post_body = str(body.get("body", "")).strip()
+
+        if not title or not post_body:
+            self.render_discussion_page(message="Title and body are required.")
+            return
+
+        try:
+            correlation_id = send_create_discussion_post(
+                user_id=user_id,
+                username=username,
+                title=title,
+                body=post_body
+            )
+            response = wait_for_response(DISCUSSION_CREATE_POST_RESPONSE_QUEUE, correlation_id)
+
+            if isinstance(response, dict):
+                message = response.get("message", "Post submitted.")
+            else:
+                message = "Post submitted."
+
+            self.render_discussion_page(message=message)
+
+        except Exception as e:
+            print("CREATE DISCUSSION POST ERROR:", e)
+            self.render_discussion_page(
+                message="Discussion post service unavailable. Please make sure RabbitMQ and backend services are running."
+            )
+
     def do_GET(self):
         self.route(send_body=True)
 
@@ -635,13 +849,16 @@ class Handler(BaseHTTPRequestHandler):
             self.handle_clear_history()
             return
 
+        if path == "/discussion/create":
+            self.handle_create_discussion_post()
+            return
+
         self.send_json({"status": "fail", "message": "Not Found"}, status=404)
 
     def route(self, send_body=True):
         parsed = urlparse(self.path)
         path = parsed.path
 
-                # HEALTH CHECK (for NGINX)
         if path == "/health":
             msg = b"OK"
             self.send_response(200)
@@ -663,7 +880,8 @@ class Handler(BaseHTTPRequestHandler):
             "/playlist", "/playlist.html",
             "/trending", "/trending.html",
             "/history", "/history.html",
-            "/profile", "/profile.html"
+            "/profile", "/profile.html",
+            "/discussion", "/discussion.html"
         }
 
         if path in protected_paths and not self.get_logged_in_username():
@@ -716,9 +934,14 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/profile" or path == "/profile.html":
             return self.serve_template("profile.html", send_body=send_body)
 
+        if path == "/discussion" or path == "/discussion.html":
+            self.render_discussion_page()
+            return True
+
         if path == "/logout":
-            clear_cookie = "username=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax"
-            self.send_redirect("/", cookies=[clear_cookie])
+            clear_username_cookie = "username=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax"
+            clear_user_id_cookie = "user_id=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax"
+            self.send_redirect("/", cookies=[clear_username_cookie, clear_user_id_cookie])
             return True
 
         msg = b"Not Found"
