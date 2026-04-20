@@ -52,9 +52,7 @@ def send_create_discussion_post(user_id, username, title, body):
         exchange="",
         routing_key=DISCUSSION_CREATE_POST_FE_TO_BEFE,
         body=json.dumps(payload),
-        properties=pika.BasicProperties(
-            delivery_mode=2
-        )
+        properties=pika.BasicProperties(delivery_mode=2)
     )
 
     connection.close()
@@ -77,9 +75,7 @@ def send_get_discussion_posts():
         exchange="",
         routing_key=DISCUSSION_GET_POSTS_FE_TO_BEFE,
         body=json.dumps(payload),
-        properties=pika.BasicProperties(
-            delivery_mode=2
-        )
+        properties=pika.BasicProperties(delivery_mode=2)
     )
 
     connection.close()
@@ -106,9 +102,7 @@ def send_create_discussion_reply(post_id, user_id, username, body):
         exchange="",
         routing_key=DISCUSSION_CREATE_REPLY_FE_TO_BEFE,
         body=json.dumps(payload),
-        properties=pika.BasicProperties(
-            delivery_mode=2
-        )
+        properties=pika.BasicProperties(delivery_mode=2)
     )
 
     connection.close()
