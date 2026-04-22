@@ -26,6 +26,11 @@ from discussion_producer import (
     send_get_discussion_posts,
     send_create_discussion_reply
 )
+from dm_producer import (
+    send_get_dm_users,
+    send_get_conversation,
+    send_dm_message
+)
 from fe_response_consumer import wait_for_response
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -48,6 +53,10 @@ HISTORY_CLEAR_RESPONSE_QUEUE = "history.clear.bedb_to_fe"
 DISCUSSION_CREATE_POST_RESPONSE_QUEUE = "discussion.create_post.bedb_to_fe"
 DISCUSSION_GET_POSTS_RESPONSE_QUEUE = "discussion.get_posts.bedb_to_fe"
 DISCUSSION_CREATE_REPLY_RESPONSE_QUEUE = "discussion.create_reply.bedb_to_fe"
+
+DM_GET_USERS_RESPONSE_QUEUE = "dm.get_users.bedb_to_fe"
+DM_GET_CONVERSATION_RESPONSE_QUEUE = "dm.get_conversation.bedb_to_fe"
+DM_SEND_RESPONSE_QUEUE = "dm.send.bedb_to_fe"
 
 
 def read_file(path):
@@ -282,131 +291,17 @@ class Handler(BaseHTTPRequestHandler):
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>Discussion Board</title>
-                <style>
-                    body {{
-                        margin: 0;
-                        font-family: Arial, sans-serif;
-                        background: linear-gradient(135deg, #0f172a, #1e293b);
-                        color: white;
-                    }}
-                    .container {{
-                        max-width: 900px;
-                        margin: 40px auto;
-                        padding: 20px;
-                    }}
-                    .form-card, .feed-card {{
-                        background: rgba(30, 41, 59, 0.92);
-                        border-radius: 14px;
-                        padding: 24px;
-                        margin-bottom: 24px;
-                    }}
-                    input[type="text"], textarea {{
-                        width: 100%;
-                        padding: 12px;
-                        margin-top: 10px;
-                        margin-bottom: 16px;
-                        border-radius: 8px;
-                        border: none;
-                        font-size: 15px;
-                        box-sizing: border-box;
-                    }}
-                    textarea {{
-                        resize: vertical;
-                        min-height: 120px;
-                    }}
-                    button {{
-                        background: #38bdf8;
-                        color: #0f172a;
-                        border: none;
-                        padding: 12px 20px;
-                        border-radius: 8px;
-                        font-weight: bold;
-                        cursor: pointer;
-                    }}
-                    .post-card {{
-                        background: rgba(51, 65, 85, 0.95);
-                        padding: 18px;
-                        border-radius: 12px;
-                        margin-bottom: 18px;
-                    }}
-                    .meta {{
-                        font-size: 13px;
-                        color: #94a3b8;
-                        margin-bottom: 14px;
-                    }}
-                    .message {{
-                        margin-bottom: 16px;
-                        color: #facc15;
-                        font-weight: bold;
-                    }}
-                    .empty {{
-                        color: #cbd5e1;
-                        text-align: center;
-                        padding: 20px 0;
-                    }}
-                    .reply-section {{
-                        margin-top: 20px;
-                        padding-top: 16px;
-                        border-top: 1px solid rgba(148, 163, 184, 0.25);
-                    }}
-                    .reply-section h4 {{
-                        margin: 0 0 14px 0;
-                        color: #38bdf8;
-                    }}
-                    .reply-card {{
-                        background: rgba(30, 41, 59, 0.75);
-                        border-left: 4px solid #38bdf8;
-                        padding: 12px 14px;
-                        border-radius: 8px;
-                        margin-bottom: 12px;
-                    }}
-                    .reply-meta {{
-                        font-size: 12px;
-                        color: #94a3b8;
-                        margin: 0 0 8px 0;
-                    }}
-                    .reply-body {{
-                        margin: 0;
-                        color: #e2e8f0;
-                        line-height: 1.5;
-                        white-space: pre-wrap;
-                    }}
-                    .reply-form {{
-                        margin-top: 14px;
-                    }}
-                    .reply-form textarea {{
-                        min-height: 80px;
-                    }}
-                    .no-replies {{
-                        color: #94a3b8;
-                        font-size: 14px;
-                    }}
-                    a {{
-                        color: #38bdf8;
-                    }}
-                </style>
             </head>
             <body>
-                <div class="container">
-                    <p><a href="/home">← Back to Home</a></p>
-                    <h1>Discussion Board</h1>
-                    <p>Welcome, <strong>{html.escape(username)}</strong></p>
-
-                    <div class="form-card">
-                        <h2>Create a Post</h2>
-                        <div class="message">{html.escape(message)}</div>
-                        <form method="POST" action="/discussion/create">
-                            <input type="text" name="title" placeholder="Post title" maxlength="255" required>
-                            <textarea name="body" placeholder="Write your post here..." required></textarea>
-                            <button type="submit">Post to Board</button>
-                        </form>
-                    </div>
-
-                    <div class="feed-card">
-                        <h2>Discussion Feed</h2>
-                        {self.render_discussion_posts_html(posts)}
-                    </div>
-                </div>
+                <h1>Discussion Board</h1>
+                <p>Welcome, <strong>{html.escape(username)}</strong></p>
+                <p>{html.escape(message)}</p>
+                <form method="POST" action="/discussion/create">
+                    <input type="text" name="title" placeholder="Post title" maxlength="255" required>
+                    <textarea name="body" placeholder="Write your post here..." required></textarea>
+                    <button type="submit">Post to Board</button>
+                </form>
+                {self.render_discussion_posts_html(posts)}
             </body>
             </html>
             """
@@ -419,6 +314,104 @@ class Handler(BaseHTTPRequestHandler):
         page = page.replace("{{username}}", html.escape(username))
         page = page.replace("{{message}}", html.escape(message))
         page = page.replace("{{posts}}", self.render_discussion_posts_html(posts))
+
+        self.send_html(page)
+
+    def render_dm_users_html(self, users, selected_username):
+        if not users:
+            return '<p class="empty-users">No users available yet.</p>'
+
+        rendered = []
+        for user in users:
+            username = html.escape(str(user.get("username", "")))
+            active_class = "active" if username == selected_username else ""
+            rendered.append(
+                f'<a class="user-link {active_class}" href="/messages?user={username}">{username}</a>'
+            )
+
+        return "\n".join(rendered)
+
+    def render_conversation_html(self, messages, current_username):
+        if not messages:
+            return '<p class="empty-chat">No messages yet. Start the conversation.</p>'
+
+        rendered = []
+        for msg in messages:
+            sender = str(msg.get("sender_username", ""))
+            body = html.escape(str(msg.get("body", ""))).replace("\n", "<br>")
+            created_at = html.escape(str(msg.get("created_at", "")))
+
+            bubble_class = "sent" if sender == current_username else "received"
+            meta_label = "You" if sender == current_username else html.escape(sender)
+
+            rendered.append(f"""
+            <div class="dm-bubble {bubble_class}">
+                <div class="dm-meta">{meta_label} • {created_at}</div>
+                <div>{body}</div>
+            </div>
+            """)
+
+        return "\n".join(rendered)
+
+    def render_dm_send_form(self, selected_username):
+        if not selected_username:
+            return '<p class="empty-chat">Choose a user from the left to open a conversation.</p>'
+
+        return f"""
+        <form method="POST" action="/messages/send" class="send-form">
+            <input type="hidden" name="receiver_username" value="{html.escape(selected_username)}">
+            <textarea name="body" placeholder="Write a message..." required></textarea>
+            <button type="submit">Send Message</button>
+        </form>
+        """
+
+    def render_messages_page(self, message=""):
+        current_username = self.get_logged_in_username()
+        if not current_username:
+            self.send_redirect("/login")
+            return
+
+        parsed = urlparse(self.path)
+        query_params = parse_qs(parsed.query)
+        selected_username = query_params.get("user", [""])[0].strip()
+
+        users = []
+        conversation = []
+
+        try:
+            users_correlation_id = send_get_dm_users(current_username)
+            users_response = wait_for_response(DM_GET_USERS_RESPONSE_QUEUE, users_correlation_id)
+            if isinstance(users_response, dict):
+                users = users_response.get("users", []) or []
+        except Exception as e:
+            print("GET DM USERS ERROR:", e)
+
+        if selected_username:
+            try:
+                convo_correlation_id = send_get_conversation(current_username, selected_username)
+                convo_response = wait_for_response(DM_GET_CONVERSATION_RESPONSE_QUEUE, convo_correlation_id)
+                if isinstance(convo_response, dict):
+                    conversation = convo_response.get("messages", []) or []
+            except Exception as e:
+                print("GET CONVERSATION ERROR:", e)
+
+        template_path = os.path.join(TEMPLATES_DIR, "messages.html")
+        if not os.path.exists(template_path):
+            self.send_html("<h1>messages.html not found</h1>", status=500)
+            return
+
+        with open(template_path, "r", encoding="utf-8") as f:
+            page = f.read()
+
+        page = page.replace("{{username}}", html.escape(current_username))
+        page = page.replace("{{message}}", html.escape(message))
+        page = page.replace("{{users}}", self.render_dm_users_html(users, selected_username))
+        page = page.replace(
+            "{{chat_title}}",
+            html.escape(selected_username if selected_username else "Select a conversation")
+        )
+        page = page.replace("{{conversation}}", self.render_conversation_html(conversation, current_username))
+        page = page.replace("{{send_form}}", self.render_dm_send_form(selected_username))
 
         self.send_html(page)
 
@@ -919,6 +912,42 @@ class Handler(BaseHTTPRequestHandler):
                 message="Discussion reply service unavailable. Please make sure RabbitMQ and backend services are running."
             )
 
+    def handle_send_dm_message(self):
+        current_username = self.get_logged_in_username()
+        if not current_username:
+            self.send_redirect("/login")
+            return
+
+        body = self.parse_request_body()
+        receiver_username = str(body.get("receiver_username", "")).strip()
+        message_body = str(body.get("body", "")).strip()
+
+        if not receiver_username or not message_body:
+            self.render_messages_page(message="Receiver and message body are required.")
+            return
+
+        if receiver_username == current_username:
+            self.render_messages_page(message="You cannot message yourself.")
+            return
+
+        try:
+            correlation_id = send_dm_message(current_username, receiver_username, message_body)
+            response = wait_for_response(DM_SEND_RESPONSE_QUEUE, correlation_id)
+
+            result_message = "Message sent."
+            if isinstance(response, dict):
+                result_message = response.get("message", result_message)
+
+            self.path = f"/messages?user={receiver_username}"
+            self.render_messages_page(message=result_message)
+
+        except Exception as e:
+            print("SEND DM ERROR:", e)
+            self.path = f"/messages?user={receiver_username}"
+            self.render_messages_page(
+                message="Direct messaging service unavailable. Please make sure RabbitMQ and backend services are running."
+            )
+
     def do_GET(self):
         self.route(send_body=True)
 
@@ -965,6 +994,10 @@ class Handler(BaseHTTPRequestHandler):
             self.handle_create_discussion_reply()
             return
 
+        if path == "/messages/send":
+            self.handle_send_dm_message()
+            return
+
         self.send_json({"status": "fail", "message": "Not Found"}, status=404)
 
     def route(self, send_body=True):
@@ -993,7 +1026,8 @@ class Handler(BaseHTTPRequestHandler):
             "/trending", "/trending.html",
             "/history", "/history.html",
             "/profile", "/profile.html",
-            "/discussion", "/discussion.html"
+            "/discussion", "/discussion.html",
+            "/messages", "/messages.html"
         }
 
         if path in protected_paths and not self.get_logged_in_username():
@@ -1048,6 +1082,10 @@ class Handler(BaseHTTPRequestHandler):
 
         if path == "/discussion" or path == "/discussion.html":
             self.render_discussion_page()
+            return True
+
+        if path == "/messages" or path == "/messages.html":
+            self.render_messages_page()
             return True
 
         if path == "/logout":

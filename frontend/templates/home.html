@@ -456,6 +456,8 @@ aspect-ratio:1/1;
     <a class="btn secondary" id="historyNavLink" href="/history">History</a>
     <a class="btn secondary" id="playlistsNavLink" href="/playlists">Playlists</a>
     <a class="btn secondary" id="trendingNavLink" href="/trending">Trending</a>
+    <a class="btn secondary" id="discussionNavLink" href="/discussion">Discussion</a>
+    <a class="btn secondary" id="messagesNavLink" href="/messages">Messages</a>
     <a class="btn secondary" id="profileNavLink" href="/profile">Profile</a>
     <a class="btn primary" href="/logout">Log Out</a>
   </div>
@@ -516,6 +518,18 @@ aspect-ratio:1/1;
     <span class="metaNumber" id="playedCount">0</span>
     <strong>Recently Played</strong>
     <p>Tracks you’ve previewed lately.</p>
+  </div>
+
+  <div class="card">
+    <span class="metaNumber">💬</span>
+    <strong>Discussion Board</strong>
+    <p>Create posts, reply to other users, and talk about music, artists, and albums.</p>
+  </div>
+
+  <div class="card">
+    <span class="metaNumber">✉️</span>
+    <strong>Direct Messages</strong>
+    <p>Start one-to-one conversations with other users and keep music chats private.</p>
   </div>
 </section>
 
@@ -586,6 +600,8 @@ const likedNavLink = document.getElementById("likedNavLink");
 const historyNavLink = document.getElementById("historyNavLink");
 const playlistsNavLink = document.getElementById("playlistsNavLink");
 const trendingNavLink = document.getElementById("trendingNavLink");
+const discussionNavLink = document.getElementById("discussionNavLink");
+const messagesNavLink = document.getElementById("messagesNavLink");
 const profileNavLink = document.getElementById("profileNavLink");
 const viewFullHistoryLink = document.getElementById("viewFullHistoryLink");
 
@@ -610,6 +626,8 @@ if (username) {
   historyNavLink.href = `/history?username=${encodeURIComponent(username)}`;
   playlistsNavLink.href = `/playlists?username=${encodeURIComponent(username)}`;
   trendingNavLink.href = `/trending?username=${encodeURIComponent(username)}`;
+  discussionNavLink.href = `/discussion`;
+  messagesNavLink.href = `/messages`;
   profileNavLink.href = `/profile?username=${encodeURIComponent(username)}`;
   viewFullHistoryLink.href = `/history?username=${encodeURIComponent(username)}`;
   welcomeTitle.textContent = `Welcome back, ${username}.`;

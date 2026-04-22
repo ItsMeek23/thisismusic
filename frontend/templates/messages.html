@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Messages - THIS IS MUSIC</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+    }
+
+    .navbar {
+      background: rgba(15, 23, 42, 0.95);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .navbar h1 {
+      margin: 0;
+      font-size: 24px;
+      color: #38bdf8;
+    }
+
+    .navbar .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .navbar a:hover {
+      color: #38bdf8;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+
+    .page-title {
+      margin-bottom: 18px;
+      color: #cbd5e1;
+      font-size: 18px;
+    }
+
+    .message-banner {
+      margin-bottom: 18px;
+      color: #facc15;
+      font-weight: bold;
+      min-height: 20px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 20px;
+    }
+
+    .sidebar,
+    .chat-panel {
+      background: rgba(30, 41, 59, 0.92);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+    }
+
+    .sidebar h2,
+    .chat-panel h2 {
+      margin-top: 0;
+      color: #38bdf8;
+      font-size: 22px;
+    }
+
+    .user-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .user-link {
+      display: block;
+      background: rgba(51, 65, 85, 0.95);
+      color: white;
+      text-decoration: none;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-weight: bold;
+      transition: 0.2s ease;
+    }
+
+    .user-link:hover,
+    .user-link.active {
+      background: #38bdf8;
+      color: #0f172a;
+    }
+
+    .empty-users,
+    .empty-chat {
+      color: #94a3b8;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .chat-header {
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    .chat-header h3 {
+      margin: 0;
+      color: #f8fafc;
+      font-size: 22px;
+    }
+
+    .conversation {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 500px;
+      overflow-y: auto;
+      padding-right: 4px;
+      margin-bottom: 18px;
+    }
+
+    .dm-bubble {
+      max-width: 75%;
+      padding: 12px 14px;
+      border-radius: 14px;
+      line-height: 1.5;
+      word-wrap: break-word;
+    }
+
+    .dm-bubble.sent {
+      background: #38bdf8;
+      color: #0f172a;
+      align-self: flex-end;
+    }
+
+    .dm-bubble.received {
+      background: rgba(51, 65, 85, 0.95);
+      color: #e2e8f0;
+      align-self: flex-start;
+    }
+
+    .dm-meta {
+      font-size: 12px;
+      margin-bottom: 6px;
+      opacity: 0.85;
+    }
+
+    .send-form textarea {
+      width: 100%;
+      min-height: 100px;
+      resize: vertical;
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 12px;
+      box-sizing: border-box;
+      font-family: inherit;
+      font-size: 15px;
+    }
+
+    .send-form button {
+      background: #38bdf8;
+      color: #0f172a;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    .send-form button:hover {
+      background: #0ea5e9;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .conversation {
+        max-height: 350px;
+      }
+
+      .dm-bubble {
+        max-width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <h1>THIS IS MUSIC</h1>
+    <div class="nav-links">
+      <a href="/home">Home</a>
+      <a href="/liked">Liked</a>
+      <a href="/trending">Trending</a>
+      <a href="/history">History</a>
+      <a href="/discussion">Discussion</a>
+      <a href="/messages">Messages</a>
+      <a href="/logout">Logout</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="page-title">
+      Direct Messages for <strong>{{username}}</strong>
+    </div>
+
+    <div class="message-banner">{{message}}</div>
+
+    <div class="layout">
+      <div class="sidebar">
+        <h2>Users</h2>
+        <div class="user-list">
+          {{users}}
+        </div>
+      </div>
+
+      <div class="chat-panel">
+        <div class="chat-header">
+          <h3>{{chat_title}}</h3>
+        </div>
+
+        <div class="conversation">
+          {{conversation}}
+        </div>
+
+        {{send_form}}
+      </div>
+    </div>
+  </div>
+</body>
+</html>
