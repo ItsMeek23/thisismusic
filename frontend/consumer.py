@@ -2,23 +2,26 @@ import json
 import time
 import pika
 
-RMQ_HOST = "100.114.37.13"
+RMQ_HOSTS = ["100.114.37.13", "100.65.228.57", "100.94.40.126"]
 RMQ_PORT = 5672
 RMQ_USER = "music"
 RMQ_PASS = "music123"
 
-
 def get_connection():
     credentials = pika.PlainCredentials(RMQ_USER, RMQ_PASS)
-    params = pika.ConnectionParameters(
-        host=RMQ_HOST,
-        port=RMQ_PORT,
-        credentials=credentials,
-        heartbeat=30,
-        blocked_connection_timeout=30
-    )
-    return pika.BlockingConnection(params)
-
+    for host in RMQ_HOSTS:
+        try:
+            params = pika.ConnectionParameters(
+                host=host,
+                port=RMQ_PORT,
+                credentials=credentials,
+                heartbeat=30,
+                blocked_connection_timeout=30
+            )
+            return pika.BlockingConnection(params)
+        except Exception:
+            continue
+    raise Exception("Could not connect to any RabbitMQ node")
 
 def create_callback_queue(channel):
     result = channel.queue_declare(queue="", exclusive=True)
@@ -26,16 +29,13 @@ def create_callback_queue(channel):
     print(f"[FE Consumer] Waiting on callback queue: {queue_name}")
     return queue_name
 
-
 def wait_for_response(channel, callback_queue, correlation_id, timeout=10):
     start_time = time.time()
-
     while time.time() - start_time < timeout:
         method_frame, header_frame, body = channel.basic_get(
             queue=callback_queue,
             auto_ack=True
         )
-
         if method_frame:
             if header_frame.correlation_id == correlation_id:
                 print(f"[FE Consumer] Received response for correlation ID: {correlation_id}")
@@ -47,9 +47,7 @@ def wait_for_response(channel, callback_queue, correlation_id, timeout=10):
                         "status": "fail",
                         "message": "Invalid JSON response from backend"
                     }
-
         time.sleep(0.1)
-
     print("[FE Consumer] Timeout waiting for response")
     return {
         "status": "fail",

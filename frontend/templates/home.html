@@ -36,10 +36,7 @@ min-height:100vh;
 padding:28px;
 }
 
-.page{
-max-width:1180px;
-margin:auto;
-}
+.page{max-width:1180px;margin:auto;}
 
 .topbar{
 display:flex;
@@ -55,11 +52,7 @@ gap:16px;
 flex-wrap:wrap;
 }
 
-.brand{
-display:flex;
-align-items:center;
-gap:12px;
-}
+.brand{display:flex;align-items:center;gap:12px;}
 
 .logo{
 width:42px;
@@ -70,11 +63,7 @@ linear-gradient(145deg,var(--mint),transparent 35%),
 linear-gradient(135deg,var(--blue),var(--blueSoft));
 }
 
-.navActions{
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-}
+.navActions{display:flex;gap:10px;flex-wrap:wrap;}
 
 .btn{
 display:inline-flex;
@@ -91,26 +80,10 @@ cursor:pointer;
 transition:transform .2s, background .2s;
 }
 
-.btn:hover{
-transform:translateY(-1px);
-background:rgba(255,255,255,.12);
-}
-
-.btn.primary{
-background:linear-gradient(135deg,var(--blue),var(--blueSoft));
-border:none;
-}
-
-.btn.secondary{
-background:rgba(255,255,255,.06);
-border:1px solid var(--line);
-}
-
-.btn.danger{
-background:rgba(255,140,168,.08);
-border:1px solid rgba(255,140,168,.24);
-color:var(--danger);
-}
+.btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.12);}
+.btn.primary{background:linear-gradient(135deg,var(--blue),var(--blueSoft));border:none;}
+.btn.secondary{background:rgba(255,255,255,.06);border:1px solid var(--line);}
+.btn.danger{background:rgba(255,140,168,.08);border:1px solid rgba(255,140,168,.24);color:var(--danger);}
 
 .hero{
 border-radius:30px;
@@ -128,11 +101,7 @@ margin:0 0 10px;
 line-height:1;
 }
 
-.hero p{
-color:var(--muted);
-margin:0;
-line-height:1.7;
-}
+.hero p{color:var(--muted);margin:0;line-height:1.7;}
 
 .userBadge{
 display:inline-flex;
@@ -149,12 +118,7 @@ color:var(--muted);
 margin-bottom:14px;
 }
 
-.searchBox{
-margin-top:24px;
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-}
+.searchBox{margin-top:24px;display:flex;gap:10px;flex-wrap:wrap;}
 
 .searchBox input{
 flex:1;
@@ -168,16 +132,9 @@ font-size:15px;
 outline:none;
 }
 
-.searchBox input::placeholder{
-color:rgba(238,245,255,.44);
-}
+.searchBox input::placeholder{color:rgba(238,245,255,.44);}
 
-.quickRow{
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-margin-top:16px;
-}
+.quickRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;}
 
 .quickChip{
 padding:9px 13px;
@@ -189,16 +146,9 @@ cursor:pointer;
 font-size:13px;
 }
 
-.quickChip:hover{
-background:rgba(255,255,255,.1);
-}
+.quickChip:hover{background:rgba(255,255,255,.1);}
 
-.status{
-margin-top:16px;
-min-height:20px;
-color:var(--muted);
-font-size:14px;
-}
+.status{margin-top:16px;min-height:20px;color:var(--muted);font-size:14px;}
 
 .grid{
 display:grid;
@@ -214,18 +164,8 @@ background:var(--panelSoft);
 border:1px solid var(--line);
 }
 
-.card strong{
-display:block;
-margin-bottom:8px;
-font-size:16px;
-}
-
-.card p{
-margin:0;
-color:var(--muted);
-font-size:14px;
-line-height:1.6;
-}
+.card strong{display:block;margin-bottom:8px;font-size:16px;}
+.card p{margin:0;color:var(--muted);font-size:14px;line-height:1.6;}
 
 .metaNumber{
 font-size:28px;
@@ -252,24 +192,11 @@ flex-wrap:wrap;
 margin-bottom:14px;
 }
 
-.sectionHeader h2{
-margin:0;
-font-size:24px;
-}
+.sectionHeader h2{margin:0;font-size:24px;}
+.muted{color:var(--muted);font-size:14px;}
 
-.muted{
-color:var(--muted);
-font-size:14px;
-}
-
-.resultsBlock{
-margin-top:24px;
-}
-
-.resultsHeading{
-margin:0 0 14px;
-font-size:22px;
-}
+.resultsBlock{margin-top:24px;}
+.resultsHeading{margin:0 0 14px;font-size:22px;}
 
 .results{
 display:grid;
@@ -331,6 +258,72 @@ margin-top:14px;
 flex-wrap:wrap;
 }
 
+.reviewPanel{
+margin-top:16px;
+padding:14px;
+border-radius:18px;
+background:rgba(0,0,0,.18);
+border:1px solid var(--line);
+}
+
+.reviewPanel h4{
+margin:0 0 10px;
+font-size:16px;
+}
+
+.reviewForm{
+display:grid;
+gap:10px;
+margin-bottom:12px;
+}
+
+.reviewForm select,
+.reviewForm textarea{
+width:100%;
+padding:10px 12px;
+border-radius:14px;
+border:1px solid var(--line);
+background:rgba(0,0,0,.25);
+color:var(--text);
+outline:none;
+font-family:inherit;
+}
+
+.reviewForm textarea{
+min-height:72px;
+resize:vertical;
+}
+
+.reviewList{
+display:grid;
+gap:10px;
+}
+
+.reviewCard{
+padding:10px 12px;
+border-radius:14px;
+background:rgba(255,255,255,.05);
+border:1px solid rgba(188,218,255,.12);
+}
+
+.reviewMeta{
+font-size:12px;
+color:var(--muted);
+margin-bottom:6px;
+}
+
+.reviewText{
+font-size:14px;
+line-height:1.5;
+margin:0;
+}
+
+.reviewEmpty{
+font-size:13px;
+color:var(--muted);
+margin:0;
+}
+
 .emptyState{
 padding:24px;
 border-radius:20px;
@@ -387,15 +380,8 @@ font-size:14px;
 animation:slideIn .18s ease;
 }
 
-.toast.success{
-border-color:rgba(121,240,207,.28);
-color:var(--success);
-}
-
-.toast.error{
-border-color:rgba(255,140,168,.28);
-color:var(--danger);
-}
+.toast.success{border-color:rgba(121,240,207,.28);color:var(--success);}
+.toast.error{border-color:rgba(255,140,168,.28);color:var(--danger);}
 
 @keyframes slideIn{
 from{opacity:0; transform:translateY(10px);}
@@ -403,37 +389,18 @@ to{opacity:1; transform:translateY(0);}
 }
 
 @media(max-width:1000px){
-.grid{
-grid-template-columns:repeat(2,1fr);
-}
+.grid{grid-template-columns:repeat(2,1fr);}
 }
 
 @media(max-width:900px){
-.results{
-grid-template-columns:1fr;
-}
-
-.hero h1{
-font-size:36px;
-}
+.results{grid-template-columns:1fr;}
+.hero h1{font-size:36px;}
 }
 
 @media(max-width:700px){
-.grid{
-grid-template-columns:1fr;
-}
-
-.songCard,
-.albumCard{
-flex-direction:column;
-}
-
-.songArt,
-.albumArt{
-width:100%;
-height:auto;
-aspect-ratio:1/1;
-}
+.grid{grid-template-columns:1fr;}
+.songCard,.albumCard{flex-direction:column;}
+.songArt,.albumArt{width:100%;height:auto;aspect-ratio:1/1;}
 }
 </style>
 </head>
@@ -465,22 +432,12 @@ aspect-ratio:1/1;
 
 <section class="hero">
   <div class="userBadge" id="userBadge">Logged In</div>
-
   <h1 id="welcomeTitle">Welcome back.</h1>
-
-  <p id="welcomeSub">
-    Search for artists, albums, and tracks to continue discovering music.
-  </p>
+  <p id="welcomeSub">Search for artists, albums, and tracks to continue discovering music.</p>
 
   <div class="searchBox">
-    <input
-      type="text"
-      placeholder="Search songs, artists, albums..."
-      id="searchInput"
-    >
-    <button class="btn primary" id="searchButton" type="button">
-      Search
-    </button>
+    <input type="text" placeholder="Search songs, artists, albums..." id="searchInput">
+    <button class="btn primary" id="searchButton" type="button">Search</button>
   </div>
 
   <div class="quickRow">
@@ -555,7 +512,7 @@ aspect-ratio:1/1;
   <h3 class="resultsHeading">Songs</h3>
   <div class="results" id="songResults">
     <div class="emptyState" style="grid-column:1/-1;">
-      Song results will appear here with artwork, preview audio, and Apple Music links.
+      Song results will appear here with artwork, preview audio, reviews, and Apple Music links.
     </div>
   </div>
 </section>
@@ -672,14 +629,10 @@ function renderEmpty(container, message) {
 async function fetchLikedSongs() {
   try {
     const response = await fetch("/api/liked-songs", {
-      headers: {
-        "Accept": "application/json"
-      }
+      headers: { "Accept": "application/json" }
     });
 
-    if (!response.ok) {
-      throw new Error("Failed to load liked songs");
-    }
+    if (!response.ok) throw new Error("Failed to load liked songs");
 
     const data = await response.json();
     return Array.isArray(data.songs) ? data.songs : [];
@@ -799,20 +752,14 @@ function savePlayedSong(song) {
     track_view_url: song.trackViewUrl || song.track_view_url || ""
   };
 
-  if (!entry.song_id) {
-    return;
-  }
+  if (!entry.song_id) return;
 
-  let tracks = getRecentlyPlayed().filter(
-    item => String(item.song_id) !== entry.song_id
-  );
-
+  let tracks = getRecentlyPlayed().filter(item => String(item.song_id) !== entry.song_id);
   tracks.unshift(entry);
   tracks = tracks.slice(0, 12);
   saveRecentlyPlayed(tracks);
   renderRecentlyPlayed();
   updateStats();
-
   sendHistoryToBackend(entry);
 }
 
@@ -891,6 +838,105 @@ async function likeSong(song) {
   }
 }
 
+async function submitReview(index) {
+  if (!username) {
+    showFeedback("You need to be logged in to review songs.", "error");
+    return;
+  }
+
+  const song = window.currentSongs[index];
+  if (!song) {
+    showFeedback("Song not found.", "error");
+    return;
+  }
+
+  const songId = String(song.trackId || song.song_id || song.collectionId || "");
+  const ratingEl = document.getElementById(`reviewRating-${index}`);
+  const textEl = document.getElementById(`reviewText-${index}`);
+
+  const rating = ratingEl ? ratingEl.value : "";
+  const review = textEl ? textEl.value.trim() : "";
+
+  if (!songId || !rating) {
+    showFeedback("Rating is required.", "error");
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/reviews/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify({
+        username,
+        song_id: songId,
+        song_name: song.trackName || "",
+        artist: song.artistName || "",
+        rating,
+        review
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || data.success === false) {
+      throw new Error(data.message || "Failed to submit review");
+    }
+
+    if (textEl) textEl.value = "";
+    showFeedback(data.message || "Review submitted.");
+    await loadReviewsForSong(index);
+  } catch (error) {
+    showFeedback(error.message || "Could not submit review.", "error");
+  }
+}
+
+async function loadReviewsForSong(index) {
+  const song = window.currentSongs[index];
+  if (!song) return;
+
+  const songId = String(song.trackId || song.song_id || song.collectionId || "");
+  const listEl = document.getElementById(`reviewList-${index}`);
+
+  if (!songId || !listEl) return;
+
+  listEl.innerHTML = `<p class="reviewEmpty">Loading reviews...</p>`;
+
+  try {
+    const response = await fetch(`/api/reviews?song_id=${encodeURIComponent(songId)}`, {
+      headers: { "Accept": "application/json" }
+    });
+
+    const data = await response.json();
+    const reviews = Array.isArray(data.reviews) ? data.reviews : [];
+
+    if (!reviews.length) {
+      listEl.innerHTML = `<p class="reviewEmpty">No reviews yet. Drop the first one.</p>`;
+      return;
+    }
+
+    listEl.innerHTML = reviews.map(item => `
+      <div class="reviewCard">
+        <div class="reviewMeta">
+          ⭐ ${escapeHtml(item.rating || "")}/5 by ${escapeHtml(item.username || "Unknown")}
+          ${item.created_at ? ` • ${escapeHtml(item.created_at)}` : ""}
+        </div>
+        <p class="reviewText">${escapeHtml(item.review || "No written review.")}</p>
+      </div>
+    `).join("");
+  } catch (error) {
+    listEl.innerHTML = `<p class="reviewEmpty">Reviews unavailable right now.</p>`;
+  }
+}
+
+function loadAllVisibleReviews() {
+  window.currentSongs.forEach((song, index) => {
+    loadReviewsForSong(index);
+  });
+}
+
 function addSongToPlaylist(song) {
   const playlists = getPlaylists();
 
@@ -964,9 +1010,7 @@ function attachPreviewTracking() {
   document.querySelectorAll(".previewPlayer").forEach((player, index) => {
     player.addEventListener("play", () => {
       const song = window.currentSongs[index];
-      if (song) {
-        savePlayedSong(song);
-      }
+      if (song) savePlayedSong(song);
     });
   });
 }
@@ -1009,12 +1053,38 @@ function renderSongs(songs) {
               Add to Playlist
             </button>
           </div>
+
+          <div class="reviewPanel">
+            <h4>Song Reviews</h4>
+
+            <div class="reviewForm">
+              <select id="reviewRating-${index}">
+                <option value="">Choose rating</option>
+                <option value="5">5 Stars</option>
+                <option value="4">4 Stars</option>
+                <option value="3">3 Stars</option>
+                <option value="2">2 Stars</option>
+                <option value="1">1 Star</option>
+              </select>
+
+              <textarea id="reviewText-${index}" placeholder="Write a review for this song..."></textarea>
+
+              <button class="btn secondary" type="button" onclick="submitReview(${index})">
+                Submit Review
+              </button>
+            </div>
+
+            <div class="reviewList" id="reviewList-${index}">
+              <p class="reviewEmpty">Loading reviews...</p>
+            </div>
+          </div>
         </div>
       </article>
     `;
   }).join("");
 
   attachPreviewTracking();
+  loadAllVisibleReviews();
 }
 
 function renderAlbums(albums) {
@@ -1027,9 +1097,7 @@ function renderAlbums(albums) {
     const artwork = album.artworkUrl100 || "";
     const collectionName = escapeHtml(album.collectionName || "Unknown Album");
     const artistName = escapeHtml(album.artistName || "Unknown Artist");
-    const releaseDate = album.releaseDate
-      ? new Date(album.releaseDate).getFullYear()
-      : "Unknown Year";
+    const releaseDate = album.releaseDate ? new Date(album.releaseDate).getFullYear() : "Unknown Year";
     const collectionViewUrl = album.collectionViewUrl || "#";
 
     return `
@@ -1075,9 +1143,7 @@ async function performSearch(query) {
 
   try {
     const response = await fetch(`/api/search?q=${encodeURIComponent(trimmed)}`);
-    if (!response.ok) {
-      throw new Error("Search request failed");
-    }
+    if (!response.ok) throw new Error("Search request failed");
 
     const data = await response.json();
     const songs = Array.isArray(data.songs) ? data.songs : [];
@@ -1103,6 +1169,7 @@ window.currentSongs = [];
 window.cachedLikedSongIds = new Set();
 window.likeSong = likeSong;
 window.addSongToPlaylist = addSongToPlaylist;
+window.submitReview = submitReview;
 
 searchButton.addEventListener("click", () => {
   performSearch(searchInput.value);

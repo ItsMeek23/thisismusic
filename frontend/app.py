@@ -31,6 +31,11 @@ from dm_producer import (
     send_get_conversation,
     send_dm_message
 )
+from review_producer import (
+    create_review,
+    get_reviews
+)
+
 from fe_response_consumer import wait_for_response
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -911,7 +916,83 @@ class Handler(BaseHTTPRequestHandler):
             self.render_discussion_page(
                 message="Discussion reply service unavailable. Please make sure RabbitMQ and backend services are running."
             )
+    def handle_create_review(self):
+        body = self.parse_request_body()
 
+        username = str(body.get("username", "")).strip()
+        song_id = str(body.get("song_id", "")).strip()
+        song_name = str(body.get("song_name", "")).strip()
+        artist = str(body.get("artist", "")).strip()
+        rating = str(body.get("rating", "")).strip()
+        review_text = str(body.get("review", "")).strip()
+
+        if not username:
+            username = self.get_logged_in_username() or ""
+
+        if not username or not song_id or not rating:
+            self.send_json(
+                {
+                    "success": False,
+                    "message": "username, song_id, and rating are required"
+                },
+                status=400
+            )
+            return
+
+        try:
+            response = create_review(
+                username=username,
+                song_id=song_id,
+                song_name=song_name,
+                artist=artist,
+                rating=rating,
+                review_text=review_text
+            )
+            self.send_json(response, status=200)
+
+        except Exception as e:
+            print("CREATE REVIEW ERROR:", e)
+            self.send_json(
+                {
+                    "success": False,
+                    "message": "Review service unavailable. Please make sure RabbitMQ and backend services are running."
+                },
+                status=503
+            )
+
+    def handle_get_reviews(self):
+        parsed = urlparse(self.path)
+        query_params = parse_qs(parsed.query)
+
+        song_id = query_params.get("song_id", [""])[0].strip()
+
+        if not song_id:
+            self.send_json(
+                {
+                    "success": False,
+                    "reviews": [],
+                    "message": "song_id is required"
+                },
+                status=400
+            )
+            return True
+
+        try:
+            response = get_reviews(song_id)
+            self.send_json(response, status=200)
+
+        except Exception as e:
+            print("GET REVIEWS ERROR:", e)
+            self.send_json(
+                {
+                    "success": False,
+                    "reviews": [],
+                    "message": "Review service unavailable. Please make sure RabbitMQ and backend services are running."
+                },
+                status=503
+            )
+
+        return True
     def handle_send_dm_message(self):
         current_username = self.get_logged_in_username()
         if not current_username:
@@ -985,7 +1066,9 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/history/clear":
             self.handle_clear_history()
             return
-
+        if path == "/api/reviews/create":
+            self.handle_create_review()
+            return
         if path == "/discussion/create":
             self.handle_create_discussion_post()
             return
@@ -1046,6 +1129,9 @@ class Handler(BaseHTTPRequestHandler):
 
         if path == "/api/history/get":
             return self.handle_get_history()
+            
+        if path == "/api/reviews":
+            return self.handle_get_reviews()
 
         if path == "/" or path == "/index.html":
             return self.serve_template("index.html", send_body=send_body)
