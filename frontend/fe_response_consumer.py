@@ -25,8 +25,8 @@ def get_connection():
                 credentials=credentials,
                 heartbeat=300,
                 blocked_connection_timeout=150,
-                connection_attempts=3,
-                retry_delay=2
+                connection_attempts=1,
+                retry_delay=0
             )
             return pika.BlockingConnection(params)
         except Exception:

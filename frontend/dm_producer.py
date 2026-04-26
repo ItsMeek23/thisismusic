@@ -2,7 +2,12 @@ import json
 import uuid
 import pika
 
-RMQ_HOST = "100.114.37.13"
+RMQ_HOSTS = [
+    "100.94.40.126",  # RMQ3 - Meek
+    "100.65.228.57",  # RMQ2 - Amaan
+    "100.114.37.13",  # RMQ1 - Daniel
+]
+
 RMQ_PORT = 5672
 RMQ_USER = "music"
 RMQ_PASS = "music123"
@@ -14,14 +19,24 @@ DM_SEND_FE_TO_BEFE = "dm.send.fe_to_befe"
 
 def get_connection():
     credentials = pika.PlainCredentials(RMQ_USER, RMQ_PASS)
-    params = pika.ConnectionParameters(
-        host=RMQ_HOST,
-        port=RMQ_PORT,
-        credentials=credentials,
-        heartbeat=30,
-        blocked_connection_timeout=30
-    )
-    return pika.BlockingConnection(params)
+    last_error = None
+
+    for host in RMQ_HOSTS:
+        try:
+            print(f"[dm_producer] Trying RMQ node: {host}")
+            params = pika.ConnectionParameters(
+                host=host,
+                port=RMQ_PORT,
+                credentials=credentials,
+                heartbeat=30,
+                blocked_connection_timeout=30
+            )
+            return pika.BlockingConnection(params)
+        except Exception as e:
+            print(f"[dm_producer] Failed RMQ node {host}: {e}")
+            last_error = e
+
+    raise last_error
 
 
 def declare_queue(channel, queue_name):
