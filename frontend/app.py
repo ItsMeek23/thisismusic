@@ -1,4 +1,4 @@
-from http.server import BaseHTTPRequestHandler, HTTPServer
+\from http.server import BaseHTTPRequestHandler, HTTPServer
 from socketserver import ThreadingMixIn
 from urllib.parse import urlparse, unquote, parse_qs
 import os
@@ -24,7 +24,9 @@ from history_producer import (
 from discussion_producer import (
     send_create_discussion_post,
     send_get_discussion_posts,
-    send_create_discussion_reply
+    send_create_discussion_reply,
+    send_edit_discussion_post,
+    send_delete_discussion_post
 )
 from dm_producer import (
     send_get_dm_users,
@@ -58,6 +60,8 @@ HISTORY_CLEAR_RESPONSE_QUEUE = "history.clear.bedb_to_fe"
 DISCUSSION_CREATE_POST_RESPONSE_QUEUE = "discussion.create_post.bedb_to_fe"
 DISCUSSION_GET_POSTS_RESPONSE_QUEUE = "discussion.get_posts.bedb_to_fe"
 DISCUSSION_CREATE_REPLY_RESPONSE_QUEUE = "discussion.create_reply.bedb_to_fe"
+DISCUSSION_EDIT_POST_RESPONSE_QUEUE = "discussion.edit_post.bedb_to_fe"
+DISCUSSION_DELETE_POST_RESPONSE_QUEUE = "discussion.delete_post.bedb_to_fe"
 
 DM_GET_USERS_RESPONSE_QUEUE = "dm.get_users.bedb_to_fe"
 DM_GET_CONVERSATION_RESPONSE_QUEUE = "dm.get_conversation.bedb_to_fe"
@@ -214,14 +218,42 @@ class Handler(BaseHTTPRequestHandler):
         if not posts:
             return '<p class="empty">No posts yet. Be the first to start the conversation.</p>'
 
+        current_username = self.get_logged_in_username() or ""
+
         rendered = []
         for post in posts:
             post_id = post.get("id")
-            title = html.escape(str(post.get("title", "")))
-            body = html.escape(str(post.get("body", "")))
-            username = html.escape(str(post.get("username", "Unknown")))
+            raw_title = str(post.get("title", ""))
+            raw_body = str(post.get("body", ""))
+            raw_username = str(post.get("username", "Unknown"))
+
+            title = html.escape(raw_title)
+            body = html.escape(raw_body)
+            username = html.escape(raw_username)
             created_at = html.escape(str(post.get("created_at", "")))
             replies = post.get("replies", []) or []
+
+            post_actions_html = ""
+            if raw_username == current_username:
+                post_actions_html = f"""
+                <div class="post-actions">
+                    <details class="edit-details">
+                        <summary class="edit-btn">Edit</summary>
+                        <form method="POST" action="/discussion/edit" class="edit-form">
+                            <input type="hidden" name="post_id" value="{html.escape(str(post_id))}">
+                            <input type="text" name="title" value="{title}" maxlength="255" required>
+                            <textarea name="body" required>{body}</textarea>
+                            <button type="submit">Save Changes</button>
+                        </form>
+                    </details>
+
+                    <form method="POST" action="/discussion/delete" class="delete-form"
+                          onsubmit="return confirm('Delete this post?');">
+                        <input type="hidden" name="post_id" value="{html.escape(str(post_id))}">
+                        <button type="submit" class="delete-btn">Delete</button>
+                    </form>
+                </div>
+                """
 
             if replies:
                 reply_parts = []
@@ -251,12 +283,14 @@ class Handler(BaseHTTPRequestHandler):
                     <p>{body.replace(chr(10), "<br>")}</p>
                 </div>
 
+                {post_actions_html}
+
                 <div class="reply-section">
                     <h4>Replies</h4>
                     {replies_html}
 
                     <form method="POST" action="/discussion/reply" class="reply-form">
-                        <input type="hidden" name="post_id" value="{post_id}">
+                        <input type="hidden" name="post_id" value="{html.escape(str(post_id))}">
                         <textarea name="body" placeholder="Write a reply..." required></textarea>
                         <button type="submit">Reply</button>
                     </form>
@@ -916,6 +950,81 @@ class Handler(BaseHTTPRequestHandler):
             self.render_discussion_page(
                 message="Discussion reply service unavailable. Please make sure RabbitMQ and backend services are running."
             )
+
+    def handle_edit_discussion_post(self):
+        username = self.get_logged_in_username()
+        user_id = self.get_logged_in_user_id()
+
+        if not username:
+            self.send_redirect("/login")
+            return
+
+        body = self.parse_request_body()
+        post_id = str(body.get("post_id", "")).strip()
+        title = str(body.get("title", "")).strip()
+        post_body = str(body.get("body", "")).strip()
+
+        if not post_id or not title or not post_body:
+            self.render_discussion_page(message="Post ID, title, and body are required.")
+            return
+
+        try:
+            correlation_id = send_edit_discussion_post(
+                post_id=post_id,
+                user_id=user_id,
+                username=username,
+                title=title,
+                body=post_body
+            )
+            response = wait_for_response(DISCUSSION_EDIT_POST_RESPONSE_QUEUE, correlation_id)
+
+            message = "Post updated."
+            if isinstance(response, dict):
+                message = response.get("message", message)
+
+            self.render_discussion_page(message=message)
+
+        except Exception as e:
+            print("EDIT DISCUSSION POST ERROR:", e)
+            self.render_discussion_page(
+                message="Discussion edit service unavailable. Please make sure RabbitMQ and backend services are running."
+            )
+
+    def handle_delete_discussion_post(self):
+        username = self.get_logged_in_username()
+        user_id = self.get_logged_in_user_id()
+
+        if not username:
+            self.send_redirect("/login")
+            return
+
+        body = self.parse_request_body()
+        post_id = str(body.get("post_id", "")).strip()
+
+        if not post_id:
+            self.render_discussion_page(message="Post ID is required.")
+            return
+
+        try:
+            correlation_id = send_delete_discussion_post(
+                post_id=post_id,
+                user_id=user_id,
+                username=username
+            )
+            response = wait_for_response(DISCUSSION_DELETE_POST_RESPONSE_QUEUE, correlation_id)
+
+            message = "Post deleted."
+            if isinstance(response, dict):
+                message = response.get("message", message)
+
+            self.render_discussion_page(message=message)
+
+        except Exception as e:
+            print("DELETE DISCUSSION POST ERROR:", e)
+            self.render_discussion_page(
+                message="Discussion delete service unavailable. Please make sure RabbitMQ and backend services are running."
+            )
+
     def handle_create_review(self):
         body = self.parse_request_body()
 
@@ -993,6 +1102,7 @@ class Handler(BaseHTTPRequestHandler):
             )
 
         return True
+
     def handle_send_dm_message(self):
         current_username = self.get_logged_in_username()
         if not current_username:
@@ -1066,15 +1176,25 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/history/clear":
             self.handle_clear_history()
             return
+
         if path == "/api/reviews/create":
             self.handle_create_review()
             return
+
         if path == "/discussion/create":
             self.handle_create_discussion_post()
             return
 
         if path == "/discussion/reply":
             self.handle_create_discussion_reply()
+            return
+
+        if path == "/discussion/edit":
+            self.handle_edit_discussion_post()
+            return
+
+        if path == "/discussion/delete":
+            self.handle_delete_discussion_post()
             return
 
         if path == "/messages/send":
@@ -1129,7 +1249,7 @@ class Handler(BaseHTTPRequestHandler):
 
         if path == "/api/history/get":
             return self.handle_get_history()
-            
+
         if path == "/api/reviews":
             return self.handle_get_reviews()
 

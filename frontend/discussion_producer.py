@@ -16,6 +16,9 @@ DISCUSSION_CREATE_POST_FE_TO_BEFE = "discussion.create_post.fe_to_befe"
 DISCUSSION_GET_POSTS_FE_TO_BEFE = "discussion.get_posts.fe_to_befe"
 DISCUSSION_CREATE_REPLY_FE_TO_BEFE = "discussion.create_reply.fe_to_befe"
 
+DISCUSSION_EDIT_POST_FE_TO_BEFE = "discussion.edit_post.fe_to_befe"
+DISCUSSION_DELETE_POST_FE_TO_BEFE = "discussion.delete_post.fe_to_befe"
+
 
 def get_connection():
     credentials = pika.PlainCredentials(RMQ_USER, RMQ_PASS)
@@ -47,6 +50,22 @@ def declare_queue(channel, queue_name):
     )
 
 
+def publish_payload(queue_name, payload):
+    connection = get_connection()
+    channel = connection.channel()
+
+    declare_queue(channel, queue_name)
+
+    channel.basic_publish(
+        exchange="",
+        routing_key=queue_name,
+        body=json.dumps(payload),
+        properties=pika.BasicProperties(delivery_mode=2)
+    )
+
+    connection.close()
+
+
 def send_create_discussion_post(user_id, username, title, body):
     correlation_id = str(uuid.uuid4())
 
@@ -58,19 +77,7 @@ def send_create_discussion_post(user_id, username, title, body):
         "correlation_id": correlation_id
     }
 
-    connection = get_connection()
-    channel = connection.channel()
-
-    declare_queue(channel, DISCUSSION_CREATE_POST_FE_TO_BEFE)
-
-    channel.basic_publish(
-        exchange="",
-        routing_key=DISCUSSION_CREATE_POST_FE_TO_BEFE,
-        body=json.dumps(payload),
-        properties=pika.BasicProperties(delivery_mode=2)
-    )
-
-    connection.close()
+    publish_payload(DISCUSSION_CREATE_POST_FE_TO_BEFE, payload)
     return correlation_id
 
 
@@ -81,19 +88,7 @@ def send_get_discussion_posts():
         "correlation_id": correlation_id
     }
 
-    connection = get_connection()
-    channel = connection.channel()
-
-    declare_queue(channel, DISCUSSION_GET_POSTS_FE_TO_BEFE)
-
-    channel.basic_publish(
-        exchange="",
-        routing_key=DISCUSSION_GET_POSTS_FE_TO_BEFE,
-        body=json.dumps(payload),
-        properties=pika.BasicProperties(delivery_mode=2)
-    )
-
-    connection.close()
+    publish_payload(DISCUSSION_GET_POSTS_FE_TO_BEFE, payload)
     return correlation_id
 
 
@@ -108,17 +103,35 @@ def send_create_discussion_reply(post_id, user_id, username, body):
         "correlation_id": correlation_id
     }
 
-    connection = get_connection()
-    channel = connection.channel()
+    publish_payload(DISCUSSION_CREATE_REPLY_FE_TO_BEFE, payload)
+    return correlation_id
 
-    declare_queue(channel, DISCUSSION_CREATE_REPLY_FE_TO_BEFE)
 
-    channel.basic_publish(
-        exchange="",
-        routing_key=DISCUSSION_CREATE_REPLY_FE_TO_BEFE,
-        body=json.dumps(payload),
-        properties=pika.BasicProperties(delivery_mode=2)
-    )
+def send_edit_discussion_post(post_id, user_id, username, title, body):
+    correlation_id = str(uuid.uuid4())
 
-    connection.close()
+    payload = {
+        "post_id": post_id,
+        "user_id": user_id,
+        "username": username,
+        "title": title,
+        "body": body,
+        "correlation_id": correlation_id
+    }
+
+    publish_payload(DISCUSSION_EDIT_POST_FE_TO_BEFE, payload)
+    return correlation_id
+
+
+def send_delete_discussion_post(post_id, user_id, username):
+    correlation_id = str(uuid.uuid4())
+
+    payload = {
+        "post_id": post_id,
+        "user_id": user_id,
+        "username": username,
+        "correlation_id": correlation_id
+    }
+
+    publish_payload(DISCUSSION_DELETE_POST_FE_TO_BEFE, payload)
     return correlation_id

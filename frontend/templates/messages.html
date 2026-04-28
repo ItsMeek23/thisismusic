@@ -4,6 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Messages - THIS IS MUSIC</title>
+
+  <script>
+    const hasConversation = "{{chat_title}}" !== "Select a conversation";
+
+    if (hasConversation) {
+      setInterval(() => {
+        window.location.reload();
+      }, 3000);
+    }
+  </script>
+
   <style>
     body {
       margin: 0;
